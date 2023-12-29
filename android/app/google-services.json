@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "148463744380",
+    "project_id": "droomy-f9742",
+    "storage_bucket": "droomy-f9742.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:148463744380:android:d5f5e3aea1522520d120f9",
+        "android_client_info": {
+          "package_name": "it.marcosaia.droomy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0LrbGOvllGDDpv1T9EhaH1rG9qkRIkpY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
