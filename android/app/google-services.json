@@ -12,7 +12,20 @@
           "package_name": "it.marcosaia.droomy"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "148463744380-o3vtjnhjvkj81t2ivg0jnkctut5q0th5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.marcosaia.droomy",
+            "certificate_hash": "464b34716ced2e4964f81302fb269a83b7c4727f"
+          }
+        },
+        {
+          "client_id": "148463744380-h3io9o4mefstgh0svms9hm4hs6rmep0n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyB0LrbGOvllGDDpv1T9EhaH1rG9qkRIkpY"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "148463744380-h3io9o4mefstgh0svms9hm4hs6rmep0n.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "148463744380-64kecghodakqhb3s542au6obljlk30vl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "it.marcosaia.droomy"
+              }
+            }
+          ]
         }
       }
     }

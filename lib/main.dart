@@ -1,7 +1,20 @@
+import 'package:droomy/view/loading_screen.dart';
+import 'package:droomy/view/login_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'firebase_options.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    // For widgets to be able to read providers, we need to wrap the entire
+    // application in a "ProviderScope" widget.
+    // This is where the state of our providers will be stored.
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -10,17 +23,37 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Droomy',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        colorScheme: const ColorScheme.dark(),
-      ),
-      themeMode: ThemeMode.dark,
-      home: const MyHomePage(title: 'Home'),
+    return FutureBuilder(
+        future:  Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
+        builder: (context, snapshot) {
+          // Check for errors
+          if (snapshot.hasError) {
+            return const Center(child: Text("Something went wrong screen is missing"));
+          }
+
+          // Once complete, show your application
+          if (snapshot.connectionState == ConnectionState.done) {
+            return MaterialApp(
+              title: 'Droomy',
+              theme: ThemeData(
+                colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+                useMaterial3: true,
+              ),
+              darkTheme: ThemeData(
+                colorScheme: const ColorScheme.dark(),
+              ),
+              themeMode: ThemeMode.dark,
+              home: const LoginScreen(),
+            );
+          }
+
+          // Otherwise, show something whilst waiting for initialization to complete
+          return const Center(
+            child: CircularProgressIndicator(
+                backgroundColor: Colors.black,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.red))
+          );
+        },
     );
   }
 }
@@ -83,7 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             Container(height: 40),
-            Text('Completed 3 steps out of 4'),
+            const Text('Completed 3 steps out of 4'),
             Container(height: 8),
             LinearProgressIndicator(
           value: 0.7,

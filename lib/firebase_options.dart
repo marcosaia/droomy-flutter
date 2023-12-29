@@ -63,6 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '148463744380',
     projectId: 'droomy-f9742',
     storageBucket: 'droomy-f9742.appspot.com',
+    androidClientId: '148463744380-o3vtjnhjvkj81t2ivg0jnkctut5q0th5.apps.googleusercontent.com',
+    iosClientId: '148463744380-64kecghodakqhb3s542au6obljlk30vl.apps.googleusercontent.com',
     iosBundleId: 'it.marcosaia.droomy',
   );
 }
