@@ -1,19 +1,18 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:droomy/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod/riverpod.dart';
 
+import '../model/user.dart';
 import '../service/firebase_authentication.dart';
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
 
   showAlertDialog(BuildContext context, String title, String message) {
-
     // Set up the button
     Widget okButton = TextButton(
       child: const Text("OK"),
-      onPressed: () { },
+      onPressed: () {},
     );
 
     // Set up the AlertDialog
@@ -34,6 +33,13 @@ class LoginScreen extends ConsumerWidget {
     );
   }
 
+  onLoginSuccess(BuildContext context) {
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+            builder: (context) => const MyHomePage(title: 'Overview')),
+        (Route<dynamic> route) => false);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
@@ -47,27 +53,34 @@ class LoginScreen extends ConsumerWidget {
             ElevatedButton(
               onPressed: () async {
                 final auth = ref.read(authProvider);
-                UserCredential? userCredential = await auth.signInWithGoogle();
-                if (userCredential != null) {
-                  showAlertDialog(context, "INFO", "Login with google OK.");
+                User? user = await auth.signInWithGoogle();
+                if (user != null) {
+                  if (!context.mounted) {
+                    throw StateError("Context is not mounted");
+                  }
+                  onLoginSuccess(context);
                 }
               },
               child: const Text('Sign in with Google'),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                final auth = ref.read(authProvider);
-                UserCredential? userCredential = await auth.signInWithEmailAndPassword(
-                  'example@email.com',
-                  'password',
-                );
-                if (userCredential != null) {
-                  // Successfully signed in with email and password
-                  // Navigate to the next screen or perform desired operations
-                }
-              },
-              child: const Text('Sign in with Email/Password'),
+            const ElevatedButton(
+              onPressed: null // () async {
+              // final auth = ref.read(authProvider);
+              // UserCredential? userCredential =
+              //     await auth.signInWithEmailAndPassword(
+              //   'example@email.com',
+              //   'password',
+              // );
+              // if (userCredential != null) {
+              //   if (!context.mounted) {
+              //     throw StateError("Context is not mounted");
+              //   }
+              //   onLoginSuccess(context);
+              // }
+              //}
+              ,
+              child: Text('Sign in with Email/Password'),
             ),
           ],
         ),
