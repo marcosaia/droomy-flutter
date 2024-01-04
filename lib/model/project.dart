@@ -1,21 +1,23 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import 'action_plan.dart';
+import 'workflow.dart';
 import 'workflow_step.dart';
 
 part 'project.g.dart';
 
 @JsonSerializable()
 class Project {
+  /// Unique project identifier
   String projectId;
-  WorkflowStep currentStep;
-  Map<WorkflowStep, ActionPlan> actionPlans;
 
-  Project({
-    required this.projectId,
-    required this.currentStep,
-    required this.actionPlans,
-  });
+  /// The project title
+  String title;
+
+  /// The project workflow
+  Workflow? workflow;
+
+  Project({required this.projectId, required this.title, this.workflow});
 
   factory Project.fromJson(Map<String, dynamic> json) =>
       _$ProjectFromJson(json);

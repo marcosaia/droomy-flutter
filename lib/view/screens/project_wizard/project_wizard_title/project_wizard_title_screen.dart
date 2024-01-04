@@ -1,4 +1,5 @@
 import 'package:droomy/common/constants.dart';
+import 'package:droomy/view/screens/project_wizard/project_wizard_workflow/project_wizard_workflow_screen.dart';
 import 'package:flutter/material.dart';
 
 class TitleInputScreen extends StatefulWidget {
@@ -35,7 +36,7 @@ class TitleInputScreenState extends State<TitleInputScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Project'),
+        title: const Text('Start a new project'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -43,12 +44,12 @@ class TitleInputScreenState extends State<TitleInputScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Enter a title for your project',
+              'It all starts with a name',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             const Text(
-              'Please provide a title (maximum ${Constants.projectTitleMaxLength} characters) for your new project:',
+              'It doesn\'t have to be the final one, but we have to start somewhere',
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 32),
@@ -57,7 +58,7 @@ class TitleInputScreenState extends State<TitleInputScreen> {
               maxLength: Constants.projectTitleMaxLength,
               style: Theme.of(context).textTheme.headlineMedium,
               decoration: const InputDecoration(
-                labelText: 'Project Title',
+                labelText: 'My next project is called',
                 border: OutlineInputBorder(),
               ),
               onChanged: (value) {
@@ -93,10 +94,14 @@ class TitleInputScreenState extends State<TitleInputScreen> {
                     onPressed: isNextButtonEnabled
                         ? () {
                             // Navigate to the next screen and pass entered title
-                            if (_titleController.text.isNotEmpty) {}
+                            if (_titleController.text.isNotEmpty) {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      const WorkflowListScreen()));
+                            }
                           }
                         : null,
-                    child: const Text('Next'),
+                    child: const Text('LET\'S GO'),
                   ),
                 ),
               ],

@@ -4,13 +4,18 @@ part 'action_item.g.dart';
 
 @JsonSerializable()
 class ActionItem {
+  /// The short description of the action item
   String shortDescription;
-  String longDescription;
+
+  /// The optional long description of the action item
+  String? longDescription;
+
+  /// The optional deadline of the action item
   DateTime? deadline;
 
   ActionItem({
     required this.shortDescription,
-    this.longDescription = "",
+    this.longDescription,
     this.deadline,
   });
 

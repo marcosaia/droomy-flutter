@@ -1,9 +1,9 @@
-import 'package:droomy/main.dart';
+import 'package:droomy/view/screens/dashboard/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../model/user.dart';
-import '../service/firebase_authentication.dart';
+import '../../../model/user.dart';
+import '../../../service/authentication/auth_service_provider.dart';
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
@@ -35,8 +35,7 @@ class LoginScreen extends ConsumerWidget {
 
   onLoginSuccess(BuildContext context) {
     Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-            builder: (context) => const MyHomePage(title: 'Overview')),
+        MaterialPageRoute(builder: (context) => const DashboardScreen()),
         (Route<dynamic> route) => false);
   }
 
@@ -65,21 +64,7 @@ class LoginScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 20),
             const ElevatedButton(
-              onPressed: null // () async {
-              // final auth = ref.read(authProvider);
-              // UserCredential? userCredential =
-              //     await auth.signInWithEmailAndPassword(
-              //   'example@email.com',
-              //   'password',
-              // );
-              // if (userCredential != null) {
-              //   if (!context.mounted) {
-              //     throw StateError("Context is not mounted");
-              //   }
-              //   onLoginSuccess(context);
-              // }
-              //}
-              ,
+              onPressed: null,
               child: Text('Sign in with Email/Password'),
             ),
           ],

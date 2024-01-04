@@ -1,12 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
+
 import 'action_item.dart';
 
 part 'action_plan.g.dart';
 
 @JsonSerializable()
 class ActionPlan {
-  DateTime? mainDeadline;
   List<ActionItem> actionItems;
+  DateTime? mainDeadline;
 
   ActionPlan({
     this.mainDeadline,
