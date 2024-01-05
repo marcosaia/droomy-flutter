@@ -8,7 +8,5 @@ final workflowRepositoryProvider =
     Provider<WorkflowRepository>((ref) => FirebaseWorkflowRepository());
 
 final defaultWorkflowsProvider = FutureProvider<List<Workflow>>((ref) async {
-  var workflows =
-      await ref.watch(workflowRepositoryProvider).getDefaultWorkflows();
-  return [workflows[0], workflows[0], workflows[0]];
+  return await ref.watch(workflowRepositoryProvider).getDefaultWorkflows();
 });

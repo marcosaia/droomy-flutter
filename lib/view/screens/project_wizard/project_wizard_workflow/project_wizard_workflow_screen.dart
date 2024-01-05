@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../model/workflow.dart';
 import '../../../../service/workflows/workflow_repository_provider.dart';
+import '../../../../widget/themed_html_text.dart';
 
 class WorkflowListScreen extends ConsumerStatefulWidget {
   const WorkflowListScreen({super.key});
@@ -46,32 +47,51 @@ class WorkflowListScreenState extends ConsumerState<WorkflowListScreen> {
               },
               itemBuilder: (context, index) {
                 Workflow workflow = workflows[index];
-                return ListTile(
-                  title: Text(
-                    workflow.displayName,
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 8),
-                      Text(workflow.shortDescription.replaceAll('\\n', '\n')),
-                      const SizedBox(height: 8),
-                      Text('Steps',
-                          style: Theme.of(context).textTheme.labelSmall),
-                      Text(
-                        getStepsDisplayText(workflow),
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelSmall
-                            ?.copyWith(color: Theme.of(context).hintColor),
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: ListTile(
+                        title: Text(
+                          workflow.displayName,
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 8),
+                            ThemedHtmlText(
+                                htmlContent: workflow.shortDescription
+                                    .replaceAll('\\n', '\n')),
+                            const SizedBox(height: 8),
+                            Text('Steps',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelSmall
+                                    ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary)),
+                            Text(
+                              getStepsDisplayText(workflow),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(
+                                      color: Theme.of(context).hintColor),
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          // Handle onTap for each workflow item
+                          // For example, navigate to a detailed view
+                        },
                       ),
-                    ],
+                    ),
                   ),
-                  onTap: () {
-                    // Handle onTap for each workflow item
-                    // For example, navigate to a detailed view
-                  },
                 );
               },
             );

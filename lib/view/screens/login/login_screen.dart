@@ -1,4 +1,5 @@
 import 'package:droomy/view/screens/dashboard/dashboard_screen.dart';
+import 'package:droomy/view/screens/debug/debug_color_grid_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -63,9 +64,13 @@ class LoginScreen extends ConsumerWidget {
               child: const Text('Sign in with Google'),
             ),
             const SizedBox(height: 20),
-            const ElevatedButton(
-              onPressed: null,
-              child: Text('Sign in with Email/Password'),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        const DebugColorGridScreen()));
+              },
+              child: const Text('Debug Color Scheme'),
             ),
           ],
         ),
