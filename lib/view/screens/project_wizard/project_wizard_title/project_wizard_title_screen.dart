@@ -97,7 +97,9 @@ class TitleInputScreenState extends State<TitleInputScreen> {
                             if (_titleController.text.isNotEmpty) {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (BuildContext context) =>
-                                      const WorkflowListScreen()));
+                                      WorkflowListScreen(
+                                          projectTitle:
+                                              _titleController.text)));
                             }
                           }
                         : null,

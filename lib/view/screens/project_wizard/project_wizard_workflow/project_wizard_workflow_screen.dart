@@ -1,3 +1,4 @@
+import 'package:droomy/view/screens/project_wizard/project_wizard_confirmation/project_wizard_confirmation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -6,7 +7,9 @@ import '../../../../service/workflows/workflow_repository_provider.dart';
 import '../../../../widget/themed_html_text.dart';
 
 class WorkflowListScreen extends ConsumerStatefulWidget {
-  const WorkflowListScreen({super.key});
+  final String projectTitle;
+
+  const WorkflowListScreen({super.key, required this.projectTitle});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() {
@@ -86,8 +89,12 @@ class WorkflowListScreenState extends ConsumerState<WorkflowListScreen> {
                           ],
                         ),
                         onTap: () {
-                          // Handle onTap for each workflow item
-                          // For example, navigate to a detailed view
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                              ConfirmationScreen(
+                                  title: "Are you ready?",
+                                  projectName: widget.projectTitle,
+                                  workflow: workflow)));
                         },
                       ),
                     ),
