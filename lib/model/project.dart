@@ -1,8 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'action_plan.dart';
 import 'workflow.dart';
-import 'workflow_step.dart';
 
 part 'project.g.dart';
 

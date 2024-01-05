@@ -1,3 +1,4 @@
+import 'package:droomy/view/screens/project/project_detail_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../model/project.dart';
@@ -67,8 +68,9 @@ class ProjectsListView extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                // Implement any action when a project item is tapped
-                // For example, navigate to a detailed view
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        ProjectDetailScreen(project: project)));
               },
             ),
           ),

@@ -22,6 +22,14 @@ class Workflow {
   /// the active step in the workflow
   int currentStepIndex = -1;
 
+  /// Utility getter for the current step
+  WorkflowStep? get currentStep {
+    if (currentStepIndex == -1) {
+      return null;
+    }
+    return steps[currentStepIndex];
+  }
+
   Workflow(
       {required this.identifier,
       required this.displayName,
