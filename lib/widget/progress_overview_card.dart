@@ -20,30 +20,42 @@ class ProgressOverviewCard extends StatelessWidget {
         children: <Widget>[
           // Add a container with padding that contains the card's title, text, and buttons
           Container(
-            padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 // Display the card's title using a font size of 24 and a dark grey color
-                Text("Your progress",
+                Text("You are doing great",
                     style: Theme.of(context).textTheme.headlineSmall),
                 // Add a space between the title and the text
                 Container(height: 10),
                 // Display the card's text using a font size of 15 and a light grey color
                 Text(
-                  'Here you can see your progress',
+                  'Keep going! One day you will be proud you did.',
                   style: TextStyle(
                     fontSize: 15,
                     color: Colors.grey[500],
                   ),
                 ),
                 Container(height: 40),
-                const Text('Completed 3 steps out of 4'),
+                const Text('Complete 5 projects (3/5)'),
                 Container(height: 8),
                 LinearProgressIndicator(
+                  minHeight: 6,
                   value: 0.7,
                   backgroundColor: Colors.grey[300],
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).colorScheme.secondary),
+                ),
+                Container(height: 8),
+                const Text('Create your first action plan'),
+                Container(height: 8),
+                LinearProgressIndicator(
+                  minHeight: 6,
+                  value: 0,
+                  backgroundColor: Colors.grey[300],
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).colorScheme.secondary),
                 ),
               ],
             ),
