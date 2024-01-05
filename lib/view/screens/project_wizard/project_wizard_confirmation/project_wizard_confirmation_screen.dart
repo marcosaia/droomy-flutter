@@ -1,8 +1,12 @@
+import 'package:droomy/model/project.dart';
+import 'package:droomy/service/projects/project_repository_provider.dart';
+import 'package:droomy/view/screens/dashboard/dashboard_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../model/workflow.dart';
 
-class ConfirmationScreen extends StatelessWidget {
+class ConfirmationScreen extends ConsumerWidget {
   final String title;
   final String projectName;
   final Workflow workflow;
@@ -15,7 +19,9 @@ class ConfirmationScreen extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    var projectRepository = ref.watch(projectRepositoryProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -52,8 +58,16 @@ class ConfirmationScreen extends StatelessWidget {
                             10.0), // Set your desired border radius here
                       ),
                     ),
-                    onPressed: () => {
-                      // TODO: Create new project and navigate to dashboard
+                    onPressed: () async {
+                      Project project = Project(
+                          workflow: workflow,
+                          projectId: 'test_project', // TODO: Use unique IDs
+                          title: projectName);
+                      projectRepository.add(project);
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) => const DashboardScreen()),
+                          (Route<dynamic> route) => false);
                     },
                     child: const Text('LET\'S GO'),
                   ),
