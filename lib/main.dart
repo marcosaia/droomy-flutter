@@ -1,55 +1,46 @@
-import 'dart:convert';
-
-import 'package:droomy/view/screens/dashboard/dashboard_screen.dart';
+import 'package:droomy/common/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:json_theme/json_theme.dart';
 
 import 'common/constants.dart';
 import 'firebase_options.dart';
-import 'service/authentication/auth_service_provider.dart';
-import 'view/screens/login/login_screen.dart';
+import 'services/authentication/auth_service_provider.dart';
+import 'screens/dashboard/screens/dashboard_screen.dart';
+import 'screens/login/screens/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Load theme from JSON
-  var themeStr = await rootBundle.loadString("assets/purple_theme.json");
-  var themeData = jsonDecode(themeStr);
-  var theme = ThemeDecoder.decodeThemeData(themeData);
+  // Run App in Provider Scope (for Riverpod)
   runApp(
-    ProviderScope(
-      child: DroomyApp(theme: theme),
+    const ProviderScope(
+      child: DroomyApp(),
     ),
   );
 }
 
 class DroomyApp extends ConsumerWidget {
-  final ThemeData? theme;
-
-  const DroomyApp({super.key, required this.theme});
+  const DroomyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final auth = ref.watch(authProvider);
     final isUserLoggedIn = auth.currentUser != null;
+    final isDarkMode = ref.watch(isDarkModeProvider);
+
+    print("Should rebuild Widget because isDarkMode was updated");
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: Constants.appName,
-      theme: theme ?? getDefaultThemeData(),
-      darkTheme: getDefaultThemeData(),
-      themeMode: ThemeMode.dark,
+      theme: AppTheme.lightTheme(),
+      darkTheme: AppTheme.darkTheme(),
+      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: isUserLoggedIn ? const DashboardScreen() : const LoginScreen(),
-    );
-  }
-
-  ThemeData getDefaultThemeData() {
-    return ThemeData(
-      colorScheme: const ColorScheme.highContrastDark(),
-      useMaterial3: true,
     );
   }
 }
