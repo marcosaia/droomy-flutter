@@ -26,6 +26,8 @@ dependencies:
   flutter_html: ^3.0.0-alpha.3
   freezed_annotation: ^2.4.1
   flutter_signin_button: ^2.0.0
+  shimmer_animation: ^2.1.0+1
+  audioplayers: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -45,6 +47,9 @@ flutter:
     - assets/light_theme.json
     - assets/dark_theme.json
     - assets/cow.png
+    - assets/sounds/sfx_step_completed_success.mp3
+    - assets/sounds/sfx_task_done_bleep.mp3
+    - assets/sounds/sfx_undo_woosh.mp3
 
   fonts:
     - family: Quicksand
