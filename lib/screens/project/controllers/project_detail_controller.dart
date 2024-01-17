@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:droomy/models/action_item.dart';
 import 'package:droomy/models/action_plan.dart';
 import 'package:droomy/models/project.dart';
@@ -18,7 +20,8 @@ class ProjectDetailController extends StateNotifier<ProjectDetailState> {
   final Project project;
 
   ProjectDetailController(super.state, this.projectRepository, this.project) {
-    state = state.copyWith(project: project);
+    state = state.copyWith(
+        project: project, areGoalsCompleted: _checkGoalsCompleted());
   }
 
   // Private utility getters
@@ -42,6 +45,17 @@ class ProjectDetailController extends StateNotifier<ProjectDetailState> {
     await updateProject();
   }
 
+  goToNextStep() async {
+    final workflow = project.workflow;
+    if (workflow == null) {
+      return;
+    }
+    workflow.currentStepIndex =
+        min(workflow.currentStepIndex + 1, workflow.steps.length - 1);
+
+    await updateProject();
+  }
+
   addActionItemWithDescription(String description) {
     final actionItem = ActionItem(shortDescription: description);
     addActionItem(actionItem);
@@ -60,13 +74,23 @@ class ProjectDetailController extends StateNotifier<ProjectDetailState> {
     await updateProject();
   }
 
-  setActionItemCompleted(ActionItem actionItem, bool completed) {
+  setActionItemCompleted(ActionItem actionItem, bool completed) async {
     actionItem.isCompleted = completed;
-    state = state.copyWith();
+    await updateProject();
   }
 
   updateProject() async {
     await projectRepository.update(project);
-    state = state.copyWith(project: project);
+    state = state.copyWith(
+        project: project, areGoalsCompleted: _checkGoalsCompleted());
+  }
+
+  bool _checkGoalsCompleted() {
+    final actionItems = project.workflow?.currentStep?.actionPlan?.actionItems;
+    if (actionItems == null) {
+      return true;
+    }
+
+    return actionItems.where((element) => !element.isCompleted).isEmpty;
   }
 }

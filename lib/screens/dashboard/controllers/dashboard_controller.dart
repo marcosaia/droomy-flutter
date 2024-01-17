@@ -27,6 +27,7 @@ class DashboardController extends StateNotifier<DashboardState> {
         viewState: const ViewStateLoading(), isProjectsLoading: true);
 
     final projects = await _projectRepository.getAll();
+    projects.sort((pr1, pr2) => pr1.createdAt.isAfter(pr2.createdAt) ? -1 : 1);
     state = state.copyWith(
         projects: projects,
         viewState: const ViewStateLoaded(),

@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$ProjectDetailState {
   Project? get project => throw _privateConstructorUsedError;
   ViewState get viewState => throw _privateConstructorUsedError;
+  bool get areGoalsCompleted => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $ProjectDetailStateCopyWith<ProjectDetailState> get copyWith =>
@@ -30,7 +31,7 @@ abstract class $ProjectDetailStateCopyWith<$Res> {
           ProjectDetailState value, $Res Function(ProjectDetailState) then) =
       _$ProjectDetailStateCopyWithImpl<$Res, ProjectDetailState>;
   @useResult
-  $Res call({Project? project, ViewState viewState});
+  $Res call({Project? project, ViewState viewState, bool areGoalsCompleted});
 
   $ViewStateCopyWith<$Res> get viewState;
 }
@@ -50,6 +51,7 @@ class _$ProjectDetailStateCopyWithImpl<$Res, $Val extends ProjectDetailState>
   $Res call({
     Object? project = freezed,
     Object? viewState = null,
+    Object? areGoalsCompleted = null,
   }) {
     return _then(_value.copyWith(
       project: freezed == project
@@ -60,6 +62,10 @@ class _$ProjectDetailStateCopyWithImpl<$Res, $Val extends ProjectDetailState>
           ? _value.viewState
           : viewState // ignore: cast_nullable_to_non_nullable
               as ViewState,
+      areGoalsCompleted: null == areGoalsCompleted
+          ? _value.areGoalsCompleted
+          : areGoalsCompleted // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 
@@ -80,7 +86,7 @@ abstract class _$$ProjectDetailStateImplCopyWith<$Res>
       __$$ProjectDetailStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({Project? project, ViewState viewState});
+  $Res call({Project? project, ViewState viewState, bool areGoalsCompleted});
 
   @override
   $ViewStateCopyWith<$Res> get viewState;
@@ -99,6 +105,7 @@ class __$$ProjectDetailStateImplCopyWithImpl<$Res>
   $Res call({
     Object? project = freezed,
     Object? viewState = null,
+    Object? areGoalsCompleted = null,
   }) {
     return _then(_$ProjectDetailStateImpl(
       project: freezed == project
@@ -109,6 +116,10 @@ class __$$ProjectDetailStateImplCopyWithImpl<$Res>
           ? _value.viewState
           : viewState // ignore: cast_nullable_to_non_nullable
               as ViewState,
+      areGoalsCompleted: null == areGoalsCompleted
+          ? _value.areGoalsCompleted
+          : areGoalsCompleted // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -116,16 +127,22 @@ class __$$ProjectDetailStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$ProjectDetailStateImpl implements _ProjectDetailState {
-  _$ProjectDetailStateImpl({required this.project, required this.viewState});
+  _$ProjectDetailStateImpl(
+      {required this.project,
+      required this.viewState,
+      this.areGoalsCompleted = true});
 
   @override
   final Project? project;
   @override
   final ViewState viewState;
+  @override
+  @JsonKey()
+  final bool areGoalsCompleted;
 
   @override
   String toString() {
-    return 'ProjectDetailState(project: $project, viewState: $viewState)';
+    return 'ProjectDetailState(project: $project, viewState: $viewState, areGoalsCompleted: $areGoalsCompleted)';
   }
 
   @override
@@ -135,11 +152,14 @@ class _$ProjectDetailStateImpl implements _ProjectDetailState {
             other is _$ProjectDetailStateImpl &&
             (identical(other.project, project) || other.project == project) &&
             (identical(other.viewState, viewState) ||
-                other.viewState == viewState));
+                other.viewState == viewState) &&
+            (identical(other.areGoalsCompleted, areGoalsCompleted) ||
+                other.areGoalsCompleted == areGoalsCompleted));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, project, viewState);
+  int get hashCode =>
+      Object.hash(runtimeType, project, viewState, areGoalsCompleted);
 
   @JsonKey(ignore: true)
   @override
@@ -152,12 +172,15 @@ class _$ProjectDetailStateImpl implements _ProjectDetailState {
 abstract class _ProjectDetailState implements ProjectDetailState {
   factory _ProjectDetailState(
       {required final Project? project,
-      required final ViewState viewState}) = _$ProjectDetailStateImpl;
+      required final ViewState viewState,
+      final bool areGoalsCompleted}) = _$ProjectDetailStateImpl;
 
   @override
   Project? get project;
   @override
   ViewState get viewState;
+  @override
+  bool get areGoalsCompleted;
   @override
   @JsonKey(ignore: true)
   _$$ProjectDetailStateImplCopyWith<_$ProjectDetailStateImpl> get copyWith =>

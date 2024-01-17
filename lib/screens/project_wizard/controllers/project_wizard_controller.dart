@@ -64,6 +64,8 @@ class ProjectWizardController extends StateNotifier<ProjectWizardState> {
     Project project = Project(
       title: title,
       workflow: workflow,
+      createdAt: DateTime.now(),
+      modifiedAt: DateTime.now(),
       projectId: '', // Auto-Generated with Firestore
     );
 

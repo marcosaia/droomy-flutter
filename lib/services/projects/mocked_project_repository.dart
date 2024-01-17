@@ -4,8 +4,18 @@ import 'package:droomy/services/projects/base/project_repository.dart';
 /// Quick mocked repository implementation
 class MockedProjectRepository extends ProjectRepository {
   List<Project> mockedProjects = [
-    Project(title: 'Love Song', projectId: '0001', workflow: null),
-    Project(title: 'Sadness Ballad', projectId: '0002', workflow: null),
+    Project(
+        title: 'Love Song',
+        projectId: '0001',
+        workflow: null,
+        createdAt: DateTime.now(),
+        modifiedAt: DateTime.now()),
+    Project(
+        title: 'Sadness Ballad',
+        projectId: '0002',
+        workflow: null,
+        createdAt: DateTime.now(),
+        modifiedAt: DateTime.now()),
   ];
 
   @override

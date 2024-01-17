@@ -1,4 +1,5 @@
 import 'package:droomy/common/constants.dart';
+import 'package:droomy/common/utils.dart';
 import 'package:droomy/models/project.dart';
 import 'package:droomy/models/user.dart';
 import 'package:droomy/screens/dashboard/controllers/dashboard_controller.dart';
@@ -50,60 +51,95 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           },
         ),
         endDrawer: const DashboardEndDrawer(),
-        body: state.isProjectsLoading
-            ? const Center(child: CircularProgressIndicator())
-            : _ProjectsList(
-                title: 'Your projects',
-                currentUser: currentUser,
-                projects: state.projects,
-                onProjectSelected: (project) {
-                  _navigateToProjectDetail(context, project);
-                },
-              ));
+        body: _DashboardProjectsOverview(
+          currentUser: currentUser,
+          isProjectsLoading: state.isProjectsLoading,
+          projects: state.projects,
+          onProjectSelected: (project) {
+            _navigateToProjectDetail(context, project);
+          },
+        ));
   }
 
-  void _navigateToProjectDetail(BuildContext context, Project project) {
-    Navigator.of(context).push(MaterialPageRoute(
+  void _navigateToProjectDetail(BuildContext context, Project project) async {
+    await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => ProjectDetailScreen(project: project)));
+    ref.read(dashboardControllerProvider.notifier).fetchUserProjects();
   }
 }
 
-class _ProjectsList extends StatelessWidget {
-  const _ProjectsList({
-    required this.title,
+class _DashboardProjectsOverview extends StatefulWidget {
+  const _DashboardProjectsOverview({
     required this.currentUser,
     required this.projects,
     required this.onProjectSelected,
+    required this.isProjectsLoading,
   });
 
-  final String title;
   final User currentUser;
   final List<Project> projects;
+  final bool isProjectsLoading;
   final void Function(Project project) onProjectSelected;
 
   @override
+  State<_DashboardProjectsOverview> createState() =>
+      _DashboardProjectsOverviewState();
+}
+
+class _DashboardProjectsOverviewState
+    extends State<_DashboardProjectsOverview> {
+  @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(0, 16.0, 0, 32.0),
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            DashboardHeader(currentUser: currentUser),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: Constants.paddingSmall),
-            ),
-            const UserProgressOverviewCard(),
-            const SizedBox(height: 16),
-            Text(title, style: Theme.of(context).textTheme.headlineMedium),
-            const SizedBox(height: 16),
-            ProjectsListView(
-              projects: projects,
-              onProjectSelected: onProjectSelected,
-            )
-          ],
-        ),
+    return widget.isProjectsLoading
+        ? Padding(
+            padding: const EdgeInsets.fromLTRB(0, 16.0, 0, 32.0),
+            child: _getMainContainer(),
+          )
+        : SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(0, 16.0, 0, 32.0),
+            child: _getMainContainer());
+  }
+
+  Widget _getMainContainer() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        mainAxisSize:
+            widget.isProjectsLoading ? MainAxisSize.max : MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // User Header Text
+          DashboardHeader(currentUser: widget.currentUser),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: Constants.paddingSmall),
+          ),
+
+          // User Header Overview Card
+          const UserProgressOverviewCard(),
+          const SizedBox(height: 16),
+
+          // Projects List and Filters
+          Row(
+            children: [
+              Text('Your projects',
+                  style: Theme.of(context).textTheme.headlineMedium),
+              const Spacer(),
+              GestureDetector(
+                  onTap: () =>
+                      showMessageOverlay(context, message: 'Filter pressed'),
+                  child: const Icon(Icons.sort)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          widget.isProjectsLoading
+              ? const Expanded(
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              : ProjectsListView(
+                  projects: widget.projects,
+                  onProjectSelected: widget.onProjectSelected,
+                )
+        ],
       ),
     );
   }

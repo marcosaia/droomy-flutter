@@ -15,8 +15,18 @@ class Project {
   /// The project workflow
   Workflow? workflow;
 
+  // Timestamp of when the project was created
+  DateTime createdAt;
+
+  // Timestamp of the last time the project was updated
+  DateTime modifiedAt;
+
   Project(
-      {required this.projectId, required this.title, required this.workflow});
+      {required this.projectId,
+      required this.title,
+      required this.workflow,
+      required this.createdAt,
+      required this.modifiedAt});
 
   factory Project.fromJson(Map<String, dynamic> json) =>
       _$ProjectFromJson(json);

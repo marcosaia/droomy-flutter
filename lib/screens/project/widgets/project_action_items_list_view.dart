@@ -50,7 +50,14 @@ class ProjectActionItemsListViewState
                       final actionItem = widget.actionItems[index];
                       return CheckboxListTile(
                         contentPadding: const EdgeInsets.all(0),
-                        title: Text(actionItem.shortDescription),
+                        title: Text(actionItem.shortDescription,
+                            style: actionItem.isCompleted
+                                ? Theme.of(context)
+                                    .textTheme
+                                    .labelLarge
+                                    ?.copyWith(
+                                        decoration: TextDecoration.lineThrough)
+                                : null),
                         value: actionItem.isCompleted,
                         secondary: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -68,9 +75,6 @@ class ProjectActionItemsListViewState
                                 child: const Icon(Icons.delete)),
                           ],
                         ),
-                        tileColor: index % 2 == 0
-                            ? Theme.of(context).colorScheme.shadow
-                            : Theme.of(context).colorScheme.background,
                         controlAffinity: ListTileControlAffinity.leading,
                         enableFeedback: true,
                         onChanged: (bool? value) {

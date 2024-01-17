@@ -9,6 +9,7 @@ class ProjectDetailState with _$ProjectDetailState {
   factory ProjectDetailState({
     required Project? project,
     required ViewState viewState,
+    @Default(true) bool areGoalsCompleted,
   }) = _ProjectDetailState;
 
   static ProjectDetailState defaultState() =>
