@@ -5,7 +5,8 @@ import 'package:droomy/models/action_item.dart';
 import 'package:droomy/models/project.dart';
 import 'package:droomy/screens/project/controllers/project_detail_controller.dart';
 import 'package:droomy/screens/project/controllers/project_detail_state.dart';
-import 'package:droomy/screens/project/widgets/project_action_items_list_view.dart';
+import 'package:droomy/screens/project/widgets/action_items/project_action_items_list_view.dart';
+import 'package:droomy/screens/project/widgets/action_items/project_action_items_selection_controller.dart';
 import 'package:droomy/widgets/action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,47 +24,76 @@ class ProjectDetailScreen extends ConsumerStatefulWidget {
 
 class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
   var isQuickActionsPanelVisible = false;
-  Set<ActionItem> _selectedItems = {};
-  bool get _isSelectionMode => _selectedItems.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
     final provider = projectDetailControllerProvider(widget.project);
     final state = ref.watch(provider);
     final controller = ref.read(provider.notifier);
+
+    // Current Project
     final project = state.project;
     if (project == null) {
       Future.microtask(() => Navigator.pop(context));
       return Container();
     }
 
+    // Current Workflow
     final workflow = project.workflow;
+
+    // Current Workflow Action Items
     final actionItems = workflow?.currentStep?.actionPlan?.actionItems;
 
+    // Action Items - Selection State & Controller
+    final selectionState =
+        ref.watch(projectActionItemsSelectionControllerProvider);
+    final selectionController =
+        ref.watch(projectActionItemsSelectionControllerProvider.notifier);
+
+    // Progress Bar Value
     var progress = 0.0;
     if (workflow != null) {
       progress = (workflow.currentStepIndex + 1) / workflow.steps.length;
     }
 
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.shadow,
-        appBar: AppBar(
-          title: _isSelectionMode
-              ? Text(
-                  '${_selectedItems.length} goal${_selectedItems.length > 1 ? 's' : ''} selected')
-              : const Text('Project Detail'),
-          actions: _isSelectionMode
-              ? [
-                  const Padding(
+    // Utility Variable for dispalying number of action items (goals)
+    final goalsNumberDisplayText =
+        '${selectionState.selectedItems.length} goal${selectionState.selectedItems.length > 1 ? 's' : ''}';
+
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.shadow,
+      appBar: AppBar(
+        title: selectionState.isSelectionMode
+            ? Text('$goalsNumberDisplayText selected')
+            : const Text('Project Detail'),
+        actions: selectionState.isSelectionMode
+            ? [
+                GestureDetector(
+                  onTap: () {
+                    showConfirmationDialog(context,
+                        title: 'Confirm',
+                        content:
+                            'Are you sure you want to remove $goalsNumberDisplayText?',
+                        onConfirm: () {
+                      selectionController.clearSelection();
+                      controller.removeActionItems(
+                          selectionState.selectedItems.toList());
+                    });
+                  },
+                  child: const Padding(
                     padding: EdgeInsets.all(Constants.paddingRegular),
                     child: Icon(Icons.delete),
                   ),
-                ]
-              : [],
-        ),
-        body: Stack(
+                ),
+              ]
+            : [],
+      ),
+      body: GestureDetector(
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+          selectionController.clearSelection();
+        },
+        child: Stack(
           children: [
             SingleChildScrollView(
               child: Column(
@@ -127,21 +157,20 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                     child: Column(
                       children: [
                         ProjectActionItemsListView(
-                            actionItems: actionItems ?? [],
-                            onActionItemChecked: (actionItem, isChecked) {
-                              controller.setActionItemCompleted(
-                                  actionItem, isChecked);
-                            },
-                            onActionItemEdited: (actionItem, newText) {
-                              if (newText.isNotEmpty) {
-                                actionItem.shortDescription = newText;
-                                controller.updateProject();
-                              }
-                            },
-                            onActionItemSelected: (selectedItems) {
-                              _selectedItems = selectedItems;
-                              setState(() {});
-                            }),
+                          selectionController: selectionController,
+                          selectionState: selectionState,
+                          actionItems: actionItems ?? [],
+                          onActionItemChecked: (actionItem, isChecked) {
+                            controller.setActionItemCompleted(
+                                actionItem, isChecked);
+                          },
+                          onActionItemEdited: (actionItem, newText) {
+                            if (newText.isNotEmpty) {
+                              actionItem.shortDescription = newText;
+                              controller.updateProject();
+                            }
+                          },
+                        ),
                         const SizedBox(height: Constants.paddingBig),
                         (actionItems?.length ?? 0) > 0
                             ? ElevatedButton(
@@ -198,51 +227,51 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
             ),
           ],
         ),
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.all(Constants.paddingSmall),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              IgnorePointer(
-                ignoring: !isQuickActionsPanelVisible,
-                child: Opacity(
-                  opacity: isQuickActionsPanelVisible ? 1 : 0,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      ActionButton(
-                          text: "Power Tools",
-                          icon: Icon(
-                            Icons.air,
-                            color: Theme.of(context).colorScheme.primary,
-                          )),
-                      const SizedBox(height: Constants.paddingBig),
-                      ActionButton(
-                          onPressed: () {
-                            _showAddGoalDialog(controller);
-                          },
-                          text: "Add a goal",
-                          icon: Icon(
-                            Icons.add_task,
-                            color: Theme.of(context).colorScheme.primary,
-                          )),
-                      const SizedBox(height: Constants.paddingBig),
-                    ],
-                  ),
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(Constants.paddingSmall),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            IgnorePointer(
+              ignoring: !isQuickActionsPanelVisible,
+              child: Opacity(
+                opacity: isQuickActionsPanelVisible ? 1 : 0,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    ActionButton(
+                        text: "Power Tools",
+                        icon: Icon(
+                          Icons.air,
+                          color: Theme.of(context).colorScheme.primary,
+                        )),
+                    const SizedBox(height: Constants.paddingBig),
+                    ActionButton(
+                        onPressed: () {
+                          _showAddGoalDialog(controller);
+                        },
+                        text: "Add a goal",
+                        icon: Icon(
+                          Icons.add_task,
+                          color: Theme.of(context).colorScheme.primary,
+                        )),
+                    const SizedBox(height: Constants.paddingBig),
+                  ],
                 ),
               ),
-              FloatingActionButton(
-                onPressed: () {
-                  isQuickActionsPanelVisible = !isQuickActionsPanelVisible;
-                  setState(() {});
-                },
-                child: isQuickActionsPanelVisible
-                    ? const Icon(Icons.close)
-                    : const Icon(Icons.add),
-              ),
-            ],
-          ),
+            ),
+            FloatingActionButton(
+              onPressed: () {
+                isQuickActionsPanelVisible = !isQuickActionsPanelVisible;
+                setState(() {});
+              },
+              child: isQuickActionsPanelVisible
+                  ? const Icon(Icons.close)
+                  : const Icon(Icons.add),
+            ),
+          ],
         ),
       ),
     );

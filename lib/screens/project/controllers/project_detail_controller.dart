@@ -61,6 +61,22 @@ class ProjectDetailController extends StateNotifier<ProjectDetailState> {
     addActionItem(actionItem);
   }
 
+  removeActionItems(List<ActionItem> actionItemsToRemove) async {
+    final actionItems = _actionPlan?.actionItems;
+    if (actionItems == null) {
+      return;
+    }
+
+    var items = List<ActionItem>.from(actionItems);
+    for (var element in actionItemsToRemove) {
+      items.remove(element);
+    }
+
+    project.workflow?.currentStep?.actionPlan?.actionItems = items;
+
+    await updateProject();
+  }
+
   removeActionItem(ActionItem actionItem) async {
     final actionItems = _actionPlan?.actionItems;
     if (actionItems == null) {
