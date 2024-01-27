@@ -23,8 +23,6 @@ class WorkflowListView extends ConsumerStatefulWidget {
 class WorkflowListViewState extends ConsumerState<WorkflowListView> {
   @override
   Widget build(BuildContext context) {
-    final controller = ref.read(projectWizardControllerProvider.notifier);
-
     return ListView.separated(
       itemCount: widget.workflows.length,
       itemBuilder: (context, index) {
@@ -34,9 +32,7 @@ class WorkflowListViewState extends ConsumerState<WorkflowListView> {
         // Return List Item for current Workflow Item
         return GestureDetector(
           onTap: () {
-            controller.setWorkflow(workflow);
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const ConfirmationScreen(title: "")));
+            widget.onTap?.call(workflow);
           },
           child: Padding(
             padding: const EdgeInsets.all(Constants.paddingRegular),

@@ -78,7 +78,7 @@ class ConfirmationScreen extends ConsumerWidget {
                             (Route<dynamic> route) => false);
                       }
                     },
-                    child: const Text('LET\'S GO'),
+                    child: const Text('CONFIRM'),
                   ),
                 ),
               ],

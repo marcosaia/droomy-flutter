@@ -1,11 +1,13 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:droomy/common/constants.dart';
+import 'package:droomy/helpers/audio_helper.dart';
 import 'package:droomy/models/action_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
-class ProjectActionItemView extends StatefulWidget {
+class ProjectActionItemView extends ConsumerStatefulWidget {
   final ActionItem actionItem;
   final void Function(String newText) onActionItemEdited;
   final void Function(bool isChecked) onActionItemChecked;
@@ -23,10 +25,11 @@ class ProjectActionItemView extends StatefulWidget {
       required this.isSelectionMode});
 
   @override
-  State<ProjectActionItemView> createState() => _ProjectActionItemViewState();
+  ConsumerState<ProjectActionItemView> createState() =>
+      _ProjectActionItemViewState();
 }
 
-class _ProjectActionItemViewState extends State<ProjectActionItemView> {
+class _ProjectActionItemViewState extends ConsumerState<ProjectActionItemView> {
   static const kAnimationDuration = 2;
 
   var _isChecked = false;
@@ -59,6 +62,8 @@ class _ProjectActionItemViewState extends State<ProjectActionItemView> {
 
   @override
   Widget build(BuildContext context) {
+    final audioHelper = ref.read(audioHelperProvider);
+
     _originalText = widget.actionItem.shortDescription;
 
     if (!_isTextFieldEnabled) {
@@ -196,10 +201,10 @@ class _ProjectActionItemViewState extends State<ProjectActionItemView> {
                             _isChecked = value ?? false;
                             if (_isChecked) {
                               HapticFeedback.vibrate();
-                              _playBleepSound();
+                              audioHelper.playBleepSound();
                               _triggerAnimation();
                             } else {
-                              _playUndoSound();
+                              audioHelper.playWooshSound();
                             }
 
                             widget.onActionItemChecked(_isChecked);
@@ -236,15 +241,7 @@ class _ProjectActionItemViewState extends State<ProjectActionItemView> {
     });
   }
 
-  // Sounds & Animation Utility Methods
-  _playBleepSound() {
-    AudioPlayer().play(AssetSource('sounds/sfx_task_done_bleep.mp3'));
-  }
-
-  _playUndoSound() {
-    AudioPlayer().play(AssetSource('sounds/sfx_undo_woosh.mp3'));
-  }
-
+  // Private UI Utils
   _triggerAnimation() {
     _shouldAnimate = true;
 

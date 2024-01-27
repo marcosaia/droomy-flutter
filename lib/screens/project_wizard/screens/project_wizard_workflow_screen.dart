@@ -46,9 +46,7 @@ class WorkflowListScreenState extends ConsumerState<WorkflowListScreen> {
         workflows: workflows,
         onTap: (Workflow workflow) {
           controller.setWorkflow(workflow);
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) =>
-                  const ConfirmationScreen(title: "Are you ready?")));
+          _navigateToNextScreen();
         });
   }
 
@@ -62,5 +60,11 @@ class WorkflowListScreenState extends ConsumerState<WorkflowListScreen> {
 
   Widget getErrorWidget(final Object error) {
     return Center(child: Text('Error: $error'));
+  }
+
+  void _navigateToNextScreen() {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) =>
+            const ConfirmationScreen(title: "Are you ready?")));
   }
 }

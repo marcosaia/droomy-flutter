@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:droomy/common/constants.dart';
 import 'package:droomy/common/utils.dart';
+import 'package:droomy/helpers/audio_helper.dart';
 import 'package:droomy/models/action_item.dart';
 import 'package:droomy/models/project.dart';
 import 'package:droomy/screens/project/controllers/project_detail_controller.dart';
@@ -30,6 +31,7 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
     final provider = projectDetailControllerProvider(widget.project);
     final state = ref.watch(provider);
     final controller = ref.read(provider.notifier);
+    final audioHelper = ref.read(audioHelperProvider);
 
     // Current Project
     final project = state.project;
@@ -187,14 +189,16 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                                     : null,
                                 onPressed: state.areGoalsCompleted
                                     ? () {
-                                        _goToNextStepPressed(controller, state);
+                                        _goToNextStepPressed(
+                                            controller, state, audioHelper);
                                       }
                                     : null,
                                 child:
                                     _getDoneButtonText(state.areGoalsCompleted))
                             : OutlinedButton(
                                 onPressed: () {
-                                  _goToNextStepPressed(controller, state);
+                                  _goToNextStepPressed(
+                                      controller, state, audioHelper);
                                 },
                                 child: _getDoneButtonText(
                                     state.areGoalsCompleted)),
@@ -277,8 +281,8 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
     );
   }
 
-  void _goToNextStepPressed(
-      ProjectDetailController controller, ProjectDetailState state) {
+  void _goToNextStepPressed(ProjectDetailController controller,
+      ProjectDetailState state, AudioHelper audioHelper) {
     final numOfGoals =
         state.project?.workflow?.currentStep?.actionPlan?.actionItems.length ??
             0;
@@ -288,7 +292,7 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
             ? "Well done! Are you ready to go to the next step?"
             : "You haven't added or completed any goals. Are you sure you want to go to the next step?",
         onConfirm: () {
-      AudioPlayer().play(AssetSource('sounds/sfx_step_completed_success.mp3'));
+      audioHelper.playVictorySound();
       controller.goToNextStep();
     });
   }
