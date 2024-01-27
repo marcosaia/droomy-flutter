@@ -44,8 +44,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/light_theme.json
-    - assets/dark_theme.json
     - assets/cow.png
     - assets/sounds/sfx_step_completed_success.mp3
     - assets/sounds/sfx_task_done_bleep.mp3
