@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:droomy/common/constants.dart';
+import 'package:droomy/common/date_utils.dart';
 import 'package:droomy/helpers/audio_helper.dart';
 import 'package:droomy/models/action_item.dart';
 import 'package:flutter/material.dart';
@@ -12,17 +13,20 @@ class ProjectActionItemView extends ConsumerStatefulWidget {
   final void Function(String newText) onActionItemEdited;
   final void Function(bool isChecked) onActionItemChecked;
   final void Function(bool isSelected) onActionItemSelected;
+  final void Function()? onDeadlinePressed;
   final bool isSelectionMode;
   final bool isSelected;
 
-  const ProjectActionItemView(
-      {super.key,
-      required this.actionItem,
-      required this.isSelected,
-      required this.onActionItemEdited,
-      required this.onActionItemChecked,
-      required this.onActionItemSelected,
-      required this.isSelectionMode});
+  const ProjectActionItemView({
+    super.key,
+    required this.actionItem,
+    required this.isSelected,
+    required this.onActionItemEdited,
+    required this.onActionItemChecked,
+    required this.onActionItemSelected,
+    required this.isSelectionMode,
+    this.onDeadlinePressed,
+  });
 
   @override
   ConsumerState<ProjectActionItemView> createState() =>
@@ -63,6 +67,8 @@ class _ProjectActionItemViewState extends ConsumerState<ProjectActionItemView> {
   @override
   Widget build(BuildContext context) {
     final audioHelper = ref.read(audioHelperProvider);
+    final remainingTime = widget.actionItem.deadline?.remainingTime();
+    final isImminent = remainingTime?.isImminent ?? false;
 
     _originalText = widget.actionItem.shortDescription;
 
@@ -178,18 +184,35 @@ class _ProjectActionItemViewState extends ConsumerState<ProjectActionItemView> {
                       : Padding(
                           padding: const EdgeInsets.symmetric(
                               vertical: Constants.paddingSmall),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.calendar_month, size: 16),
-                              const SizedBox(width: Constants.paddingSmall),
-                              Text(
-                                  widget.actionItem.deadline
-                                          ?.toLocal()
-                                          .toString() ??
-                                      "No deadline",
-                                  style:
-                                      Theme.of(context).textTheme.labelSmall),
-                            ],
+                          child: GestureDetector(
+                            onTap: () {
+                              widget.onDeadlinePressed?.call();
+                            },
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Icon(
+                                  Icons.calendar_month,
+                                  size: 20,
+                                  color: isImminent
+                                      ? Theme.of(context).colorScheme.error
+                                      : null,
+                                ),
+                                const SizedBox(width: Constants.paddingSmall),
+                                Text(remainingTime?.message ?? "No deadline",
+                                    style: isImminent
+                                        ? Theme.of(context)
+                                            .textTheme
+                                            .labelLarge
+                                            ?.copyWith(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .error)
+                                        : Theme.of(context)
+                                            .textTheme
+                                            .labelLarge),
+                              ],
+                            ),
                           ),
                         ),
                   leading: IgnorePointer(

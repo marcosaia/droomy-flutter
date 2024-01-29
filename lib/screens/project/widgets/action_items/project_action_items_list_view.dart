@@ -13,6 +13,7 @@ class ProjectActionItemsListView extends StatefulWidget {
   final void Function(ActionItem actionItem, String newText) onActionItemEdited;
   final void Function(ActionItem actionItem, bool isChecked)
       onActionItemChecked;
+  final void Function(ActionItem actionItem)? onDeadlinePressed;
 
   const ProjectActionItemsListView({
     super.key,
@@ -21,6 +22,7 @@ class ProjectActionItemsListView extends StatefulWidget {
     required this.selectionState,
     required this.onActionItemEdited,
     required this.onActionItemChecked,
+    this.onDeadlinePressed,
   });
 
   @override
@@ -68,6 +70,9 @@ class ProjectActionItemsListViewState
                         widget.selectionController
                             .setActionItemSelected(actionItem, isSelected);
                         setState(() {});
+                      },
+                      onDeadlinePressed: () {
+                        widget.onDeadlinePressed?.call(actionItem);
                       },
                       isSelected: widget.selectionState.selectedItems
                           .contains(actionItem),

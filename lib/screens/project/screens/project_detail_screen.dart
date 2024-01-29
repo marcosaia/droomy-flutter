@@ -1,4 +1,3 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:droomy/common/constants.dart';
 import 'package:droomy/common/utils.dart';
 import 'package:droomy/helpers/audio_helper.dart';
@@ -8,6 +7,7 @@ import 'package:droomy/screens/project/controllers/project_detail_controller.dar
 import 'package:droomy/screens/project/controllers/project_detail_state.dart';
 import 'package:droomy/screens/project/widgets/action_items/project_action_items_list_view.dart';
 import 'package:droomy/screens/project/widgets/action_items/project_action_items_selection_controller.dart';
+import 'package:droomy/screens/project/widgets/dialogs/project_goal_dialog.dart';
 import 'package:droomy/widgets/action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -172,6 +172,14 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                               controller.updateProject();
                             }
                           },
+                          onDeadlinePressed: (actionItem) async {
+                            final deadline =
+                                await _showDeadlineDialog(actionItem);
+                            if (deadline != null) {
+                              actionItem.deadline = deadline;
+                              controller.updateProject();
+                            }
+                          },
                         ),
                         const SizedBox(height: Constants.paddingBig),
                         (actionItems?.length ?? 0) > 0
@@ -232,53 +240,69 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
           ],
         ),
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(Constants.paddingSmall),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            IgnorePointer(
-              ignoring: !isQuickActionsPanelVisible,
-              child: Opacity(
-                opacity: isQuickActionsPanelVisible ? 1 : 0,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    ActionButton(
-                        text: "Power Tools",
-                        icon: Icon(
-                          Icons.air,
-                          color: Theme.of(context).colorScheme.primary,
-                        )),
-                    const SizedBox(height: Constants.paddingBig),
-                    ActionButton(
-                        onPressed: () {
-                          _showAddGoalDialog(controller);
-                        },
-                        text: "Add a goal",
-                        icon: Icon(
-                          Icons.add_task,
-                          color: Theme.of(context).colorScheme.primary,
-                        )),
-                    const SizedBox(height: Constants.paddingBig),
-                  ],
-                ),
+      floatingActionButton: selectionState.isSelectionMode
+          ? null
+          : Padding(
+              padding: const EdgeInsets.all(Constants.paddingSmall),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  IgnorePointer(
+                    ignoring: !isQuickActionsPanelVisible,
+                    child: Opacity(
+                      opacity: isQuickActionsPanelVisible ? 1 : 0,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          ActionButton(
+                              text: "Power Tools",
+                              icon: Icon(
+                                Icons.air,
+                                color: Theme.of(context).colorScheme.primary,
+                              )),
+                          const SizedBox(height: Constants.paddingBig),
+                          ActionButton(
+                              onPressed: () {
+                                _showAddGoalDialog(controller);
+                              },
+                              text: "Add a goal",
+                              icon: Icon(
+                                Icons.add_task,
+                                color: Theme.of(context).colorScheme.primary,
+                              )),
+                          const SizedBox(height: Constants.paddingBig),
+                        ],
+                      ),
+                    ),
+                  ),
+                  FloatingActionButton(
+                    onPressed: () {
+                      isQuickActionsPanelVisible = !isQuickActionsPanelVisible;
+                      setState(() {});
+                    },
+                    child: isQuickActionsPanelVisible
+                        ? const Icon(Icons.close)
+                        : const Icon(Icons.add),
+                  ),
+                ],
               ),
             ),
-            FloatingActionButton(
-              onPressed: () {
-                isQuickActionsPanelVisible = !isQuickActionsPanelVisible;
-                setState(() {});
-              },
-              child: isQuickActionsPanelVisible
-                  ? const Icon(Icons.close)
-                  : const Icon(Icons.add),
-            ),
-          ],
-        ),
-      ),
     );
+  }
+
+  Future<DateTime?> _showDeadlineDialog(ActionItem actionItem) async {
+    final DateTime currentDate = DateTime.now();
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: actionItem.deadline,
+        firstDate: currentDate.subtract(const Duration(days: 1)),
+        lastDate: currentDate.add(const Duration(days: 365)));
+    if (picked != null && picked != actionItem.deadline) {
+      return DateTime(picked.year, picked.month, picked.day, 23, 59);
+    }
+
+    return null;
   }
 
   void _goToNextStepPressed(ProjectDetailController controller,
@@ -286,6 +310,7 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
     final numOfGoals =
         state.project?.workflow?.currentStep?.actionPlan?.actionItems.length ??
             0;
+
     showConfirmationDialog(context,
         title: 'Confirm',
         content: numOfGoals > 0
@@ -307,28 +332,6 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
     );
   }
 
-  void _showEditGoalDialog(
-      ProjectDetailController controller, ActionItem actionItem) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return ProjectGoalDialog(
-              title: "Edit goal",
-              action: "SAVE",
-              initialValue: actionItem.shortDescription,
-              onConfirm: (text) {
-                if (text.isNotEmpty) {
-                  actionItem.shortDescription = text;
-                  controller.updateProject();
-                }
-              },
-              onDismiss: () {
-                isQuickActionsPanelVisible = false;
-                setState(() {});
-              });
-        });
-  }
-
   void _showAddGoalDialog(ProjectDetailController controller) {
     showDialog(
         context: context,
@@ -347,84 +350,5 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                 setState(() {});
               });
         });
-  }
-}
-
-class ProjectGoalDialog extends StatefulWidget {
-  final String title;
-  final String action;
-  final String initialValue;
-  final void Function(String inputText) onConfirm;
-  final void Function() onDismiss;
-
-  const ProjectGoalDialog(
-      {super.key,
-      required this.title,
-      required this.action,
-      required this.initialValue,
-      required this.onConfirm,
-      required this.onDismiss});
-
-  @override
-  State<ProjectGoalDialog> createState() => _ProjectGoalDialogState();
-}
-
-class _ProjectGoalDialogState extends State<ProjectGoalDialog> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  var isValid = false;
-  var inputText = "";
-
-  @override
-  void initState() {
-    inputText = widget.initialValue;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(widget.title),
-      content: Form(
-        key: _formKey,
-        child: TextFormField(
-          initialValue: widget.initialValue,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          keyboardType: TextInputType.text,
-          validator: (value) {
-            if (value == null || value.trim().isEmpty) {
-              return 'The text cannot be empty';
-            }
-            return null;
-          },
-          textCapitalization: TextCapitalization.sentences,
-          autofocus: true,
-          onChanged: (value) {
-            setState(() {
-              isValid = _formKey.currentState?.validate() ?? false;
-              inputText = value;
-            });
-          },
-          decoration: const InputDecoration(
-            hintText: 'Enter Goal (eg. Write Lyrics)',
-          ),
-        ),
-      ),
-      actions: <Widget>[
-        TextButton(
-          onPressed: isValid
-              ? () {
-                  if (!(_formKey.currentState?.validate() ?? false)) {
-                    return;
-                  }
-                  widget.onConfirm.call(inputText.trim());
-                  Navigator.of(context).pop();
-                  widget.onDismiss.call();
-                }
-              : null,
-          child: Text(widget.action),
-        ),
-      ],
-    );
   }
 }
