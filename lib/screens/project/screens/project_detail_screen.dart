@@ -27,15 +27,10 @@ class ProjectDetailScreen extends ConsumerStatefulWidget {
 }
 
 class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
+  // Private State Variables
   var isQuickActionsPanelVisible = false;
 
-  void _onPopInvoked(didPop) {
-    if (!didPop) {
-      return;
-    }
-    ref.invalidate(projectActionItemsSelectionControllerProvider);
-  }
-
+  // Private Properties
   bool get _isFloatingButtonVisible {
     final selectionState =
         ref.read(projectActionItemsSelectionControllerProvider);
@@ -66,6 +61,7 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
         '${selectionState.selectedItems.length} goal${selectionState.selectedItems.length > 1 ? 's' : ''}';
 
     return PopScope(
+        canPop: !selectionState.isSelectionMode,
         onPopInvoked: _onPopInvoked,
         child: Scaffold(
           backgroundColor: Theme.of(context).colorScheme.shadow,
@@ -204,6 +200,27 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                     ])
               : null,
         ));
+  }
+
+  // Private Utility Methods
+  void _onPopInvoked(didPop) {
+    if (!didPop) {
+      _clearSelection();
+      return;
+    }
+
+    ref.invalidate(projectActionItemsSelectionControllerProvider);
+  }
+
+  void _clearSelection() {
+    final selectionState =
+        ref.read(projectActionItemsSelectionControllerProvider);
+    final selectionController =
+        ref.watch(projectActionItemsSelectionControllerProvider.notifier);
+
+    if (selectionState.isSelectionMode) {
+      selectionController.clearSelection();
+    }
   }
 
   Future<DateTime?> _showDeadlineDialog(ActionItem actionItem) async {
