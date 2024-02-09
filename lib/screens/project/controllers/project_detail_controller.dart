@@ -24,29 +24,25 @@ class ProjectDetailController extends StateNotifier<ProjectDetailState> {
         project: project, areGoalsCompleted: _checkGoalsCompleted());
   }
 
-  // Private utility getters
-  ActionPlan? get _actionPlan => project.workflow?.currentStep?.actionPlan;
-
   addActionItem(ActionItem actionItem) async {
-    if (_actionPlan?.actionItems == null) {
-      print("Creating project Action Plan");
+    if (project.currentActionItems == null) {
       project.workflow?.currentStep?.actionPlan = ActionPlan(actionItems: []);
     }
 
-    final actionItems = _actionPlan?.actionItems;
+    final actionItems = project.currentActionItems;
     if (actionItems == null) {
       return;
     }
 
     var items = List<ActionItem>.from(actionItems);
     items.add(actionItem);
-    project.workflow?.currentStep?.actionPlan?.actionItems = items;
+    project.currentActionPlan?.actionItems = items;
 
     await updateProject();
   }
 
   swapActionItems(int oldIndex, int newIndex) async {
-    final actionItems = project.workflow?.currentStep?.actionPlan?.actionItems;
+    final actionItems = project.currentActionItems;
     if (actionItems == null) {
       return;
     }
@@ -65,7 +61,7 @@ class ProjectDetailController extends StateNotifier<ProjectDetailState> {
     actionItems[newIndex] = temp;
 
     // Update project
-    project.workflow?.currentStep?.actionPlan?.actionItems = actionItems;
+    project.currentActionPlan?.actionItems = actionItems;
 
     await updateProject();
   }
@@ -99,7 +95,7 @@ class ProjectDetailController extends StateNotifier<ProjectDetailState> {
   }
 
   removeActionItems(List<ActionItem> actionItemsToRemove) async {
-    final actionItems = _actionPlan?.actionItems;
+    final actionItems = project.currentActionItems;
     if (actionItems == null) {
       return;
     }
@@ -109,13 +105,13 @@ class ProjectDetailController extends StateNotifier<ProjectDetailState> {
       items.remove(element);
     }
 
-    project.workflow?.currentStep?.actionPlan?.actionItems = items;
+    project.currentActionPlan?.actionItems = items;
 
     await updateProject();
   }
 
   removeActionItem(ActionItem actionItem) async {
-    final actionItems = _actionPlan?.actionItems;
+    final actionItems = project.currentActionItems;
     if (actionItems == null) {
       return;
     }

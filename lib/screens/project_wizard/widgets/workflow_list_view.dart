@@ -1,7 +1,5 @@
 import 'package:droomy/common/constants.dart';
 import 'package:droomy/models/workflow.dart';
-import 'package:droomy/screens/project_wizard/controllers/project_wizard_controller.dart';
-import 'package:droomy/screens/project_wizard/screens/project_wizard_confirmation_screen.dart';
 import 'package:droomy/widgets/image_header_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

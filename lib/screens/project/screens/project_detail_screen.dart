@@ -1,14 +1,17 @@
 import 'package:droomy/common/constants.dart';
+import 'package:droomy/common/theme.dart';
 import 'package:droomy/common/utils.dart';
 import 'package:droomy/helpers/audio_helper.dart';
 import 'package:droomy/models/action_item.dart';
 import 'package:droomy/models/project.dart';
 import 'package:droomy/screens/project/controllers/project_detail_controller.dart';
-import 'package:droomy/screens/project/controllers/project_detail_state.dart';
 import 'package:droomy/screens/project/widgets/action_items/project_action_items_list_view.dart';
 import 'package:droomy/screens/project/widgets/action_items/project_action_items_selection_controller.dart';
 import 'package:droomy/screens/project/widgets/dialogs/project_goal_dialog.dart';
+import 'package:droomy/screens/project/widgets/project_detail_header_view.dart';
 import 'package:droomy/widgets/action_button.dart';
+import 'package:droomy/widgets/actions_floating_button.dart';
+import 'package:droomy/widgets/opacity_touch_overlay.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -33,12 +36,17 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
     ref.invalidate(projectActionItemsSelectionControllerProvider);
   }
 
+  bool get _isFloatingButtonVisible {
+    final selectionState =
+        ref.read(projectActionItemsSelectionControllerProvider);
+    return !selectionState.isSelectionMode;
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = projectDetailControllerProvider(widget.project);
     final state = ref.watch(provider);
     final controller = ref.read(provider.notifier);
-    final audioHelper = ref.read(audioHelperProvider);
 
     // Current Project
     final project = state.project;
@@ -47,265 +55,155 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
       return Container();
     }
 
-    // Current Workflow
-    final workflow = project.workflow;
-
-    // Current Workflow Action Items
-    final actionItems = workflow?.currentStep?.actionPlan?.actionItems;
-
     // Action Items - Selection State & Controller
     final selectionState =
         ref.watch(projectActionItemsSelectionControllerProvider);
     final selectionController =
         ref.watch(projectActionItemsSelectionControllerProvider.notifier);
 
-    // Progress Bar Value
-    var progress = 0.0;
-    if (workflow != null) {
-      progress = (workflow.currentStepIndex + 1) / workflow.steps.length;
-    }
-
     // Utility Variable for dispalying number of action items (goals)
     final goalsNumberDisplayText =
         '${selectionState.selectedItems.length} goal${selectionState.selectedItems.length > 1 ? 's' : ''}';
 
     return PopScope(
-      onPopInvoked: _onPopInvoked,
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.shadow,
-        appBar: AppBar(
-          title: selectionState.isSelectionMode
-              ? Text('$goalsNumberDisplayText selected')
-              : const Text('Project Detail'),
-          actions: selectionState.isSelectionMode
-              ? [
-                  GestureDetector(
-                    onTap: () {
-                      showConfirmationDialog(context,
-                          title: 'Confirm',
-                          content:
-                              'Are you sure you want to remove $goalsNumberDisplayText?',
-                          onConfirm: () {
-                        selectionController.clearSelection();
-                        controller.removeActionItems(
-                            selectionState.selectedItems.toList());
-                      });
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.all(Constants.paddingRegular),
-                      child: Icon(Icons.delete),
-                    ),
-                  ),
-                ]
-              : [],
-        ),
-        body: GestureDetector(
-          onTap: () {
-            FocusManager.instance.primaryFocus?.unfocus();
-            selectionController.clearSelection();
-          },
-          child: Stack(
-            children: [
-              SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      color: Theme.of(context).colorScheme.shadow,
-                      child: Stack(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(32.0),
-                            child: Column(
-                              children: [
-                                Hero(
-                                  tag: "project_title_${project.projectId}",
-                                  child: Text(
-                                    project.title,
-                                    textAlign: TextAlign.center,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displaySmall
-                                        ?.copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onBackground),
-                                  ),
-                                ),
-                                const SizedBox(height: Constants.paddingSmall),
-                                Text(
-                                  project.workflow?.currentStep?.displayName ??
-                                      "-",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineMedium
-                                      ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                      ),
-                                ),
-                                const SizedBox(
-                                    height: Constants.paddingRegular),
-                                LinearProgressIndicator(
-                                  value: progress,
-                                ),
-                                const SizedBox(
-                                    height: Constants.paddingRegular),
-                                Text(project.workflow?.currentStep
-                                        ?.shortDescription ??
-                                    "-"),
-                              ],
-                            ),
-                          )
-                        ],
+        onPopInvoked: _onPopInvoked,
+        child: Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.shadow,
+          appBar: AppBar(
+            title: selectionState.isSelectionMode
+                ? Text('$goalsNumberDisplayText selected')
+                : const Text('Project Detail'),
+            actions: selectionState.isSelectionMode
+                ? [
+                    GestureDetector(
+                      onTap: () {
+                        showConfirmationDialog(context,
+                            title: 'Confirm',
+                            content:
+                                'Are you sure you want to remove $goalsNumberDisplayText?',
+                            onConfirm: () {
+                          selectionController.clearSelection();
+                          controller.removeActionItems(
+                              selectionState.selectedItems.toList());
+                        });
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(Constants.paddingRegular),
+                        child: Icon(Icons.delete),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(Constants.paddingRegular),
-                      child: Text("Your plan",
-                          style: Theme.of(context).textTheme.headlineMedium),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(Constants.paddingRegular),
-                      child: Column(
-                        children: [
-                          ProjectActionItemsListView(
-                            selectionController: selectionController,
-                            selectionState: selectionState,
-                            actionItems: actionItems ?? [],
-                            onActionItemChecked: (actionItem, isChecked) {
-                              controller.setActionItemCompleted(
-                                  actionItem, isChecked);
-                            },
-                            onActionItemEdited: (actionItem, newText) {
-                              if (newText.isNotEmpty) {
-                                controller.updateActionItem(actionItem,
-                                    shortDescription: newText);
-                              }
-                            },
-                            onDeadlinePressed: (actionItem) async {
-                              final deadline =
-                                  await _showDeadlineDialog(actionItem);
-                              if (deadline != null) {
-                                controller.updateActionItem(actionItem,
-                                    deadline: deadline);
-                              }
-                            },
-                            onActionItemsSwapped: (oldIndex, newIndex) async {
-                              controller.swapActionItems(oldIndex, newIndex);
-                            },
-                          ),
-                          const SizedBox(height: Constants.paddingBig),
-                          (actionItems?.length ?? 0) > 0
-                              ? ElevatedButton(
-                                  style: state.areGoalsCompleted
-                                      ? Theme.of(context)
-                                          .elevatedButtonTheme
-                                          .style
-                                          ?.copyWith(
-                                              backgroundColor:
-                                                  MaterialStateProperty.all(
-                                                      Theme.of(context)
-                                                          .colorScheme
-                                                          .primaryContainer))
-                                      : null,
-                                  onPressed: state.areGoalsCompleted
-                                      ? () {
-                                          _goToNextStepPressed(
-                                              controller, state, audioHelper);
-                                        }
-                                      : null,
-                                  child: _getDoneButtonText(
-                                      state.areGoalsCompleted))
-                              : OutlinedButton(
-                                  onPressed: () {
-                                    _goToNextStepPressed(
-                                        controller, state, audioHelper);
-                                  },
-                                  child: _getDoneButtonText(
-                                      state.areGoalsCompleted)),
-                          const SizedBox(height: 64.0),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  if (!isQuickActionsPanelVisible) {
-                    return;
-                  }
-                  isQuickActionsPanelVisible = false;
-                  setState(() {});
-                },
-                child: IgnorePointer(
-                  ignoring: !isQuickActionsPanelVisible,
-                  child: Opacity(
-                    opacity: isQuickActionsPanelVisible ? 0.9 : 0,
-                    child: Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      color: Theme.of(context).colorScheme.background,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+                  ]
+                : [],
           ),
-        ),
-        floatingActionButton: selectionState.isSelectionMode
-            ? null
-            : Padding(
-                padding: const EdgeInsets.all(Constants.paddingSmall),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    IgnorePointer(
-                      ignoring: !isQuickActionsPanelVisible,
-                      child: Opacity(
-                        opacity: isQuickActionsPanelVisible ? 1 : 0,
+          body: GestureDetector(
+            onTap: () {
+              FocusManager.instance.primaryFocus?.unfocus();
+              selectionController.clearSelection();
+            },
+            child: Stack(
+              children: [
+                SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      // Header View
+                      ProjectDetailHeaderView(project: project),
+                      // Action Items Header View
+                      Padding(
+                        padding: const EdgeInsets.all(Constants.paddingRegular),
+                        child: Text("Your plan",
+                            style: Theme.of(context).textTheme.headlineMedium),
+                      ),
+                      // Action Items List View
+                      Padding(
+                        padding: const EdgeInsets.all(Constants.paddingRegular),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            // ActionButton(
-                            //     text: "Power Tools",
-                            //     icon: Icon(
-                            //       Icons.air,
-                            //       color: Theme.of(context).colorScheme.primary,
-                            //     )),
-                            // const SizedBox(height: Constants.paddingBig),
-                            ActionButton(
-                                onPressed: () {
-                                  _showAddGoalDialog(controller);
-                                },
-                                text: "Add a goal",
-                                icon: Icon(
-                                  Icons.add_task,
-                                  color: Theme.of(context).colorScheme.primary,
-                                )),
+                            ProjectActionItemsListView(
+                              selectionController: selectionController,
+                              selectionState: selectionState,
+                              actionItems: project.currentActionItems ?? [],
+                              onActionItemChecked: (actionItem, isChecked) {
+                                controller.setActionItemCompleted(
+                                    actionItem, isChecked);
+                              },
+                              onActionItemEdited: (actionItem, newText) {
+                                if (newText.isNotEmpty) {
+                                  controller.updateActionItem(actionItem,
+                                      shortDescription: newText);
+                                }
+                              },
+                              onDeadlinePressed: (actionItem) async {
+                                final deadline =
+                                    await _showDeadlineDialog(actionItem);
+                                if (deadline != null) {
+                                  controller.updateActionItem(actionItem,
+                                      deadline: deadline);
+                                }
+                              },
+                              onActionItemsSwapped: (oldIndex, newIndex) async {
+                                controller.swapActionItems(oldIndex, newIndex);
+                              },
+                            ),
                             const SizedBox(height: Constants.paddingBig),
+                            project.currentNumOfActionItems > 0
+                                ? ElevatedButton(
+                                    style: state.areGoalsCompleted
+                                        ? context.primaryContainerBgButtonStyle
+                                        : null,
+                                    onPressed: state.areGoalsCompleted
+                                        ? () {
+                                            _goToNextStepPressed();
+                                          }
+                                        : null,
+                                    child: _getDoneButtonText(
+                                        state.areGoalsCompleted))
+                                : OutlinedButton(
+                                    onPressed: () {
+                                      _goToNextStepPressed();
+                                    },
+                                    child: _getDoneButtonText(
+                                        state.areGoalsCompleted)),
+                            const SizedBox(
+                                height: Constants.paddingIncrediblyBig),
                           ],
                         ),
                       ),
-                    ),
-                    FloatingActionButton(
-                      onPressed: () {
-                        isQuickActionsPanelVisible =
-                            !isQuickActionsPanelVisible;
-                        setState(() {});
-                      },
-                      child: isQuickActionsPanelVisible
-                          ? const Icon(Icons.close)
-                          : const Icon(Icons.add),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-      ),
-    );
+                OpacityTouchOverlay(
+                  isOverlayVisible: isQuickActionsPanelVisible,
+                  onOverlayTouched: () {
+                    setState(() {
+                      isQuickActionsPanelVisible = false;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          floatingActionButton: _isFloatingButtonVisible
+              ? ActionsFloatingButton(
+                  isActionsPanelVisible: isQuickActionsPanelVisible,
+                  onFloatingButtonTap: () {
+                    setState(() {
+                      isQuickActionsPanelVisible = !isQuickActionsPanelVisible;
+                    });
+                  },
+                  actionButtons: [
+                      ActionButton(
+                          onPressed: () {
+                            _showAddGoalDialog();
+                          },
+                          text: "Add a goal",
+                          icon: Icon(
+                            Icons.add_task,
+                            color: Theme.of(context).colorScheme.primary,
+                          )),
+                    ])
+              : null,
+        ));
   }
 
   Future<DateTime?> _showDeadlineDialog(ActionItem actionItem) async {
@@ -322,20 +220,24 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
     return null;
   }
 
-  void _goToNextStepPressed(ProjectDetailController controller,
-      ProjectDetailState state, AudioHelper audioHelper) {
-    final numOfGoals =
-        state.project?.workflow?.currentStep?.actionPlan?.actionItems.length ??
-            0;
+  void _goToNextStepPressed() {
+    final provider = projectDetailControllerProvider(widget.project);
+    final state = ref.read(provider);
+
+    // Assert project is not null
+    final project = state.project;
+    if (project == null) {
+      return;
+    }
 
     showConfirmationDialog(context,
         title: 'Confirm',
-        content: numOfGoals > 0
+        content: project.currentNumOfActionItems > 0
             ? "Well done! Are you ready to go to the next step?"
             : "You haven't added or completed any goals. Are you sure you want to go to the next step?",
         onConfirm: () {
-      audioHelper.playVictorySound();
-      controller.goToNextStep();
+      ref.read(audioHelperProvider).playVictorySound();
+      ref.read(provider.notifier).goToNextStep();
     });
   }
 
@@ -349,7 +251,9 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
     );
   }
 
-  void _showAddGoalDialog(ProjectDetailController controller) {
+  void _showAddGoalDialog() {
+    final controller =
+        ref.read(projectDetailControllerProvider(widget.project).notifier);
     showDialog(
         context: context,
         builder: (context) {

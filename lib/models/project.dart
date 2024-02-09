@@ -1,3 +1,5 @@
+import 'package:droomy/models/action_item.dart';
+import 'package:droomy/models/action_plan.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'workflow.dart';
@@ -20,6 +22,21 @@ class Project {
 
   // Timestamp of the last time the project was updated
   DateTime modifiedAt;
+
+  // Utility getter for current action plan
+  ActionPlan? get currentActionPlan {
+    return workflow?.currentStep?.actionPlan;
+  }
+
+  // Utility getter for current action items
+  List<ActionItem>? get currentActionItems {
+    return currentActionPlan?.actionItems;
+  }
+
+  // Utility getter for current number of action items
+  int get currentNumOfActionItems {
+    return currentActionItems?.length ?? 0;
+  }
 
   Project(
       {required this.projectId,

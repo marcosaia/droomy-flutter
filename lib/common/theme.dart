@@ -72,3 +72,11 @@ class AppTheme {
         //     MaterialStateProperty.all<Color>(Colors.black26))),
       );
 }
+
+extension ElevatedButtonStyleExtension on BuildContext {
+  ButtonStyle? get primaryContainerBgButtonStyle {
+    return Theme.of(this).elevatedButtonTheme.style?.copyWith(
+        backgroundColor: MaterialStateProperty.all(
+            Theme.of(this).colorScheme.primaryContainer));
+  }
+}

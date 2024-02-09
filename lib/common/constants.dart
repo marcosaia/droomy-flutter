@@ -13,4 +13,6 @@ class Constants {
   static const double paddingSmall = 8;
   static const double paddingRegular = 16;
   static const double paddingBig = 32;
+  static const double paddingExtraBig = 48;
+  static const double paddingIncrediblyBig = 64;
 }
