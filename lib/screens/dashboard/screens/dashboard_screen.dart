@@ -1,9 +1,6 @@
 import 'package:droomy/models/project.dart';
-import 'package:droomy/models/user.dart';
 import 'package:droomy/screens/dashboard/controllers/dashboard_controller.dart';
 import 'package:droomy/screens/dashboard/tabs/drafts/dashboard_drafts_page_tab.dart';
-import 'package:droomy/screens/dashboard/tabs/overview/controllers/dashboard_overview_controller.dart';
-import 'package:droomy/screens/dashboard/tabs/overview/controllers/dashboard_overview_state.dart';
 import 'package:droomy/screens/dashboard/tabs/overview/dashboard_overview_tab.dart';
 import 'package:droomy/screens/dashboard/tabs/overview/widgets/dashboard_overview_end_drawer.dart';
 import 'package:droomy/screens/project/screens/project_detail_screen.dart';
@@ -21,15 +18,17 @@ class DashboardScreen extends ConsumerStatefulWidget {
 }
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  // The active tab index
   int _currentTabIndex = 0;
 
-  Widget _getCurrentTabWidget() {
+  // The widget for the current tab
+  Widget get _currentTabWidget {
     switch (_currentTabIndex) {
       // Dashboard Overview
       case 0:
         return DashboardOverviewTab(
           onProjectSelected: (project) {
-            _navigateToProjectDetail(context, project);
+            _navigateToProjectDetail(project);
           },
         );
       // Drafts
@@ -59,7 +58,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           Scaffold.of(context).openEndDrawer();
         },
       ),
-      body: _getCurrentTabWidget(),
+      body: _currentTabWidget,
       endDrawer: const DashboardOverviewEndDrawer(),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
@@ -82,7 +81,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
-  void _navigateToProjectDetail(BuildContext context, Project project) async {
+  // Navigates to Project Detail screen
+  void _navigateToProjectDetail(Project project) async {
     await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => ProjectDetailScreen(project: project)));
   }
