@@ -1,4 +1,5 @@
 import 'package:droomy/services/authentication/base/auth_service.dart';
+import 'package:droomy/services/storage/storage_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -9,5 +10,6 @@ final firebaseAuthProvider =
 
 final authProvider = Provider<AuthService>((ref) {
   final auth = ref.read(firebaseAuthProvider);
-  return FirebaseAuthService(auth);
+  final storage = ref.read(storageProvider);
+  return FirebaseAuthService(auth, storage);
 });

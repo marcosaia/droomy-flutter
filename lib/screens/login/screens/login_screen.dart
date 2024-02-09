@@ -7,11 +7,26 @@ import 'package:flutter_signin_button/flutter_signin_button.dart';
 
 import '../../dashboard/screens/dashboard_screen.dart';
 
-class LoginScreen extends ConsumerWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() {
+    return _LoginScreenState();
+  }
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(loginControllerProvider.notifier).tryAutoSignIn();
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(loginControllerProvider);
     final controller = ref.watch(loginControllerProvider.notifier);
 

@@ -8,10 +8,12 @@ class User {
   final String displayName;
   final String? email;
   final String? photoUrl;
+  final String? accessToken;
 
   User(
       {required this.uid,
       required this.displayName,
       this.email,
-      this.photoUrl});
+      this.photoUrl,
+      this.accessToken});
 }

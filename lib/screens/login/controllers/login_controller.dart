@@ -14,6 +14,19 @@ class LoginController extends StateNotifier<LoginState> {
 
   LoginController(super.state, this._authService);
 
+  Future<void> tryAutoSignIn() async {
+    state = state.copyWith(viewState: const ViewStateLoading());
+    final user = await _authService.autoSignIn();
+
+    if (user == null) {
+      state = state.copyWith(viewState: const ViewState.loaded());
+      return;
+    }
+
+    state =
+        state.copyWith(isLoggedIn: true, viewState: const ViewStateLoaded());
+  }
+
   Future<void> signInWithGoogle() async {
     state = state.copyWith(viewState: const ViewStateLoading());
     final user = await _authService.signInWithGoogle();
