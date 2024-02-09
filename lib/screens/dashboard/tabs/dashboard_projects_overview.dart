@@ -32,14 +32,14 @@ class _DashboardProjectsOverviewState extends State<DashboardProjectsOverview> {
     return widget.isProjectsLoading
         ? Padding(
             padding: const EdgeInsets.fromLTRB(0, 16.0, 0, 32.0),
-            child: _getMainContainer(),
+            child: _mainContainer,
           )
         : SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(0, 16.0, 0, 32.0),
-            child: _getMainContainer());
+            child: _mainContainer);
   }
 
-  Widget _getMainContainer() {
+  Widget get _mainContainer {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(

@@ -47,14 +47,16 @@ class TitleInputScreenState extends ConsumerState<TitleInputScreen> {
           appBar: AppBar(
             title: const Text('Start a new project'),
           ),
-          body: ProjectTitleInputForm(
-            controller: controller,
-            state: state,
-            onSubmit: () {
-              controller.fetchWorkflows();
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: ((context) => const WorkflowListScreen())));
-            },
+          body: SingleChildScrollView(
+            child: ProjectTitleInputForm(
+              controller: controller,
+              state: state,
+              onSubmit: () {
+                controller.fetchWorkflows();
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: ((context) => const WorkflowListScreen())));
+              },
+            ),
           )),
     );
   }
