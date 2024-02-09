@@ -2,7 +2,8 @@ import 'package:droomy/models/project.dart';
 import 'package:droomy/models/user.dart';
 import 'package:droomy/screens/dashboard/controllers/dashboard_controller.dart';
 import 'package:droomy/screens/dashboard/controllers/dashboard_state.dart';
-import 'package:droomy/screens/dashboard/tabs/dashboard_projects_overview.dart';
+import 'package:droomy/screens/dashboard/tabs/dashboard_drafts_page_tab.dart';
+import 'package:droomy/screens/dashboard/tabs/dashboard_projects_overview_tab.dart';
 import 'package:droomy/screens/dashboard/widgets/dashboard_end_drawer.dart';
 import 'package:droomy/screens/project/screens/project_detail_screen.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     switch (_currentTabIndex) {
       // Dashboard Overview
       case 0:
-        return DashboardProjectsOverview(
+        return DashboardProjectsOverviewTab(
           currentUser: currentUser,
           isProjectsLoading: state.isProjectsLoading,
           projects: state.projects,
@@ -43,13 +44,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         );
       // Drafts
       case 1:
-        return Container(
-          alignment: Alignment.center,
-          child: const Text("Drafts"),
-        );
-      case 2:
-        return Container(
-            alignment: Alignment.center, child: const Text("Profile"));
+        return const DashboardDraftsPageTab();
     }
 
     return Container();
@@ -92,8 +87,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               BottomNavigationBarItem(
                   icon: Icon(Icons.dashboard), label: 'Overview'),
               BottomNavigationBarItem(icon: Icon(Icons.draw), label: 'Drafts'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.person_4), label: 'Profile'),
             ]),
       ),
     );

@@ -7,8 +7,8 @@ import 'package:droomy/screens/dashboard/widgets/projects_list_view.dart';
 import 'package:droomy/screens/dashboard/widgets/user_progress_overview_card.dart';
 import 'package:flutter/material.dart';
 
-class DashboardProjectsOverview extends StatefulWidget {
-  const DashboardProjectsOverview({
+class DashboardProjectsOverviewTab extends StatefulWidget {
+  const DashboardProjectsOverviewTab({
     super.key,
     required this.currentUser,
     required this.projects,
@@ -22,11 +22,12 @@ class DashboardProjectsOverview extends StatefulWidget {
   final void Function(Project project) onProjectSelected;
 
   @override
-  State<DashboardProjectsOverview> createState() =>
-      _DashboardProjectsOverviewState();
+  State<DashboardProjectsOverviewTab> createState() =>
+      _DashboardProjectsOverviewTabState();
 }
 
-class _DashboardProjectsOverviewState extends State<DashboardProjectsOverview> {
+class _DashboardProjectsOverviewTabState
+    extends State<DashboardProjectsOverviewTab> {
   @override
   Widget build(BuildContext context) {
     return widget.isProjectsLoading
