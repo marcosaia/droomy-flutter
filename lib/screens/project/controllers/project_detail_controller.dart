@@ -41,6 +41,61 @@ class ProjectDetailController extends StateNotifier<ProjectDetailState> {
     await updateProject();
   }
 
+  addActionItemWithDescription(String description) {
+    final actionItem = ActionItem(
+        shortDescription: description,
+        createdAt: DateTime.now(),
+        modifiedAt: DateTime.now());
+    addActionItem(actionItem);
+  }
+
+  setActionItemCompleted(ActionItem actionItem, bool completed) async {
+    await updateActionItem(actionItem, completed: completed);
+  }
+
+  updateActionItem(ActionItem actionItem,
+      {String? shortDescription, DateTime? deadline, bool? completed}) async {
+    // Update Properties
+    actionItem.shortDescription =
+        shortDescription ?? actionItem.shortDescription;
+    actionItem.deadline = deadline ?? actionItem.deadline;
+    actionItem.isCompleted = completed ?? actionItem.isCompleted;
+
+    // Bump modified timestamp
+    actionItem.modifiedAt = DateTime.now();
+
+    await updateProject();
+  }
+
+  removeActionItems(List<ActionItem> actionItemsToRemove) async {
+    final actionItems = project.currentActionItems;
+    if (actionItems == null) {
+      return;
+    }
+
+    var items = List<ActionItem>.from(actionItems);
+    for (var element in actionItemsToRemove) {
+      items.remove(element);
+    }
+
+    project.currentActionPlan?.actionItems = items;
+
+    await updateProject();
+  }
+
+  removeActionItem(ActionItem actionItem) async {
+    final actionItems = project.currentActionItems;
+    if (actionItems == null) {
+      return;
+    }
+
+    var items = List<ActionItem>.from(actionItems);
+    items.remove(actionItem);
+    project.workflow?.currentStep?.actionPlan?.actionItems = items;
+
+    await updateProject();
+  }
+
   swapActionItems(int oldIndex, int newIndex) async {
     final actionItems = project.currentActionItems;
     if (actionItems == null) {
@@ -74,57 +129,6 @@ class ProjectDetailController extends StateNotifier<ProjectDetailState> {
     workflow.currentStepIndex =
         min(workflow.currentStepIndex + 1, workflow.steps.length - 1);
 
-    await updateProject();
-  }
-
-  addActionItemWithDescription(String description) {
-    final actionItem = ActionItem(
-        shortDescription: description,
-        createdAt: DateTime.now(),
-        modifiedAt: DateTime.now());
-    addActionItem(actionItem);
-  }
-
-  updateActionItem(ActionItem actionItem,
-      {String? shortDescription, DateTime? deadline}) {
-    actionItem.shortDescription =
-        shortDescription ?? actionItem.shortDescription;
-    actionItem.deadline = deadline ?? actionItem.deadline;
-
-    updateProject();
-  }
-
-  removeActionItems(List<ActionItem> actionItemsToRemove) async {
-    final actionItems = project.currentActionItems;
-    if (actionItems == null) {
-      return;
-    }
-
-    var items = List<ActionItem>.from(actionItems);
-    for (var element in actionItemsToRemove) {
-      items.remove(element);
-    }
-
-    project.currentActionPlan?.actionItems = items;
-
-    await updateProject();
-  }
-
-  removeActionItem(ActionItem actionItem) async {
-    final actionItems = project.currentActionItems;
-    if (actionItems == null) {
-      return;
-    }
-
-    var items = List<ActionItem>.from(actionItems);
-    items.remove(actionItem);
-    project.workflow?.currentStep?.actionPlan?.actionItems = items;
-
-    await updateProject();
-  }
-
-  setActionItemCompleted(ActionItem actionItem, bool completed) async {
-    actionItem.isCompleted = completed;
     await updateProject();
   }
 
