@@ -26,6 +26,13 @@ class ProjectDetailScreen extends ConsumerStatefulWidget {
 class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
   var isQuickActionsPanelVisible = false;
 
+  void _onPopInvoked(didPop) {
+    if (!didPop) {
+      return;
+    }
+    ref.invalidate(projectActionItemsSelectionControllerProvider);
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = projectDetailControllerProvider(widget.project);
@@ -62,232 +69,242 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
     final goalsNumberDisplayText =
         '${selectionState.selectedItems.length} goal${selectionState.selectedItems.length > 1 ? 's' : ''}';
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.shadow,
-      appBar: AppBar(
-        title: selectionState.isSelectionMode
-            ? Text('$goalsNumberDisplayText selected')
-            : const Text('Project Detail'),
-        actions: selectionState.isSelectionMode
-            ? [
-                GestureDetector(
-                  onTap: () {
-                    showConfirmationDialog(context,
-                        title: 'Confirm',
-                        content:
-                            'Are you sure you want to remove $goalsNumberDisplayText?',
-                        onConfirm: () {
-                      selectionController.clearSelection();
-                      controller.removeActionItems(
-                          selectionState.selectedItems.toList());
-                    });
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.all(Constants.paddingRegular),
-                    child: Icon(Icons.delete),
+    return PopScope(
+      onPopInvoked: _onPopInvoked,
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.shadow,
+        appBar: AppBar(
+          title: selectionState.isSelectionMode
+              ? Text('$goalsNumberDisplayText selected')
+              : const Text('Project Detail'),
+          actions: selectionState.isSelectionMode
+              ? [
+                  GestureDetector(
+                    onTap: () {
+                      showConfirmationDialog(context,
+                          title: 'Confirm',
+                          content:
+                              'Are you sure you want to remove $goalsNumberDisplayText?',
+                          onConfirm: () {
+                        selectionController.clearSelection();
+                        controller.removeActionItems(
+                            selectionState.selectedItems.toList());
+                      });
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.all(Constants.paddingRegular),
+                      child: Icon(Icons.delete),
+                    ),
                   ),
-                ),
-              ]
-            : [],
-      ),
-      body: GestureDetector(
-        onTap: () {
-          FocusManager.instance.primaryFocus?.unfocus();
-          selectionController.clearSelection();
-        },
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    color: Theme.of(context).colorScheme.shadow,
-                    child: Stack(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(32.0),
-                          child: Column(
-                            children: [
-                              Hero(
-                                tag: "project_title_${project.projectId}",
-                                child: Text(
-                                  project.title,
-                                  textAlign: TextAlign.center,
+                ]
+              : [],
+        ),
+        body: GestureDetector(
+          onTap: () {
+            FocusManager.instance.primaryFocus?.unfocus();
+            selectionController.clearSelection();
+          },
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      color: Theme.of(context).colorScheme.shadow,
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(32.0),
+                            child: Column(
+                              children: [
+                                Hero(
+                                  tag: "project_title_${project.projectId}",
+                                  child: Text(
+                                    project.title,
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displaySmall
+                                        ?.copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onBackground),
+                                  ),
+                                ),
+                                const SizedBox(height: Constants.paddingSmall),
+                                Text(
+                                  project.workflow?.currentStep?.displayName ??
+                                      "-",
                                   style: Theme.of(context)
                                       .textTheme
-                                      .displaySmall
+                                      .headlineMedium
                                       ?.copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onBackground),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
                                 ),
-                              ),
-                              const SizedBox(height: Constants.paddingSmall),
-                              Text(
-                                project.workflow?.currentStep?.displayName ??
-                                    "-",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineMedium
-                                    ?.copyWith(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                              ),
-                              const SizedBox(height: Constants.paddingRegular),
-                              LinearProgressIndicator(
-                                value: progress,
-                              ),
-                              const SizedBox(height: Constants.paddingRegular),
-                              Text(project.workflow?.currentStep
-                                      ?.shortDescription ??
-                                  "-"),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(Constants.paddingRegular),
-                    child: Text("Your plan",
-                        style: Theme.of(context).textTheme.headlineMedium),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(Constants.paddingRegular),
-                    child: Column(
-                      children: [
-                        ProjectActionItemsListView(
-                          selectionController: selectionController,
-                          selectionState: selectionState,
-                          actionItems: actionItems ?? [],
-                          onActionItemChecked: (actionItem, isChecked) {
-                            controller.setActionItemCompleted(
-                                actionItem, isChecked);
-                          },
-                          onActionItemEdited: (actionItem, newText) {
-                            if (newText.isNotEmpty) {
-                              actionItem.shortDescription = newText;
-                              controller.updateProject();
-                            }
-                          },
-                          onDeadlinePressed: (actionItem) async {
-                            final deadline =
-                                await _showDeadlineDialog(actionItem);
-                            if (deadline != null) {
-                              actionItem.deadline = deadline;
-                              controller.updateProject();
-                            }
-                          },
-                        ),
-                        const SizedBox(height: Constants.paddingBig),
-                        (actionItems?.length ?? 0) > 0
-                            ? ElevatedButton(
-                                style: state.areGoalsCompleted
-                                    ? Theme.of(context)
-                                        .elevatedButtonTheme
-                                        .style
-                                        ?.copyWith(
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .primaryContainer))
-                                    : null,
-                                onPressed: state.areGoalsCompleted
-                                    ? () {
-                                        _goToNextStepPressed(
-                                            controller, state, audioHelper);
-                                      }
-                                    : null,
-                                child:
-                                    _getDoneButtonText(state.areGoalsCompleted))
-                            : OutlinedButton(
-                                onPressed: () {
-                                  _goToNextStepPressed(
-                                      controller, state, audioHelper);
-                                },
-                                child: _getDoneButtonText(
-                                    state.areGoalsCompleted)),
-                        const SizedBox(height: 64.0),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                if (!isQuickActionsPanelVisible) {
-                  return;
-                }
-                isQuickActionsPanelVisible = false;
-                setState(() {});
-              },
-              child: IgnorePointer(
-                ignoring: !isQuickActionsPanelVisible,
-                child: Opacity(
-                  opacity: isQuickActionsPanelVisible ? 0.9 : 0,
-                  child: Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    color: Theme.of(context).colorScheme.background,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: selectionState.isSelectionMode
-          ? null
-          : Padding(
-              padding: const EdgeInsets.all(Constants.paddingSmall),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  IgnorePointer(
-                    ignoring: !isQuickActionsPanelVisible,
-                    child: Opacity(
-                      opacity: isQuickActionsPanelVisible ? 1 : 0,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          ActionButton(
-                              text: "Power Tools",
-                              icon: Icon(
-                                Icons.air,
-                                color: Theme.of(context).colorScheme.primary,
-                              )),
-                          const SizedBox(height: Constants.paddingBig),
-                          ActionButton(
-                              onPressed: () {
-                                _showAddGoalDialog(controller);
-                              },
-                              text: "Add a goal",
-                              icon: Icon(
-                                Icons.add_task,
-                                color: Theme.of(context).colorScheme.primary,
-                              )),
-                          const SizedBox(height: Constants.paddingBig),
+                                const SizedBox(
+                                    height: Constants.paddingRegular),
+                                LinearProgressIndicator(
+                                  value: progress,
+                                ),
+                                const SizedBox(
+                                    height: Constants.paddingRegular),
+                                Text(project.workflow?.currentStep
+                                        ?.shortDescription ??
+                                    "-"),
+                              ],
+                            ),
+                          )
                         ],
                       ),
                     ),
-                  ),
-                  FloatingActionButton(
-                    onPressed: () {
-                      isQuickActionsPanelVisible = !isQuickActionsPanelVisible;
-                      setState(() {});
-                    },
-                    child: isQuickActionsPanelVisible
-                        ? const Icon(Icons.close)
-                        : const Icon(Icons.add),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.all(Constants.paddingRegular),
+                      child: Text("Your plan",
+                          style: Theme.of(context).textTheme.headlineMedium),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(Constants.paddingRegular),
+                      child: Column(
+                        children: [
+                          ProjectActionItemsListView(
+                            selectionController: selectionController,
+                            selectionState: selectionState,
+                            actionItems: actionItems ?? [],
+                            onActionItemChecked: (actionItem, isChecked) {
+                              controller.setActionItemCompleted(
+                                  actionItem, isChecked);
+                            },
+                            onActionItemEdited: (actionItem, newText) {
+                              if (newText.isNotEmpty) {
+                                controller.updateActionItem(actionItem,
+                                    shortDescription: newText);
+                              }
+                            },
+                            onDeadlinePressed: (actionItem) async {
+                              final deadline =
+                                  await _showDeadlineDialog(actionItem);
+                              if (deadline != null) {
+                                controller.updateActionItem(actionItem,
+                                    deadline: deadline);
+                              }
+                            },
+                            onActionItemsSwapped: (oldIndex, newIndex) async {
+                              controller.swapActionItems(oldIndex, newIndex);
+                            },
+                          ),
+                          const SizedBox(height: Constants.paddingBig),
+                          (actionItems?.length ?? 0) > 0
+                              ? ElevatedButton(
+                                  style: state.areGoalsCompleted
+                                      ? Theme.of(context)
+                                          .elevatedButtonTheme
+                                          .style
+                                          ?.copyWith(
+                                              backgroundColor:
+                                                  MaterialStateProperty.all(
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .primaryContainer))
+                                      : null,
+                                  onPressed: state.areGoalsCompleted
+                                      ? () {
+                                          _goToNextStepPressed(
+                                              controller, state, audioHelper);
+                                        }
+                                      : null,
+                                  child: _getDoneButtonText(
+                                      state.areGoalsCompleted))
+                              : OutlinedButton(
+                                  onPressed: () {
+                                    _goToNextStepPressed(
+                                        controller, state, audioHelper);
+                                  },
+                                  child: _getDoneButtonText(
+                                      state.areGoalsCompleted)),
+                          const SizedBox(height: 64.0),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+              GestureDetector(
+                onTap: () {
+                  if (!isQuickActionsPanelVisible) {
+                    return;
+                  }
+                  isQuickActionsPanelVisible = false;
+                  setState(() {});
+                },
+                child: IgnorePointer(
+                  ignoring: !isQuickActionsPanelVisible,
+                  child: Opacity(
+                    opacity: isQuickActionsPanelVisible ? 0.9 : 0,
+                    child: Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      color: Theme.of(context).colorScheme.background,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: selectionState.isSelectionMode
+            ? null
+            : Padding(
+                padding: const EdgeInsets.all(Constants.paddingSmall),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    IgnorePointer(
+                      ignoring: !isQuickActionsPanelVisible,
+                      child: Opacity(
+                        opacity: isQuickActionsPanelVisible ? 1 : 0,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            // ActionButton(
+                            //     text: "Power Tools",
+                            //     icon: Icon(
+                            //       Icons.air,
+                            //       color: Theme.of(context).colorScheme.primary,
+                            //     )),
+                            // const SizedBox(height: Constants.paddingBig),
+                            ActionButton(
+                                onPressed: () {
+                                  _showAddGoalDialog(controller);
+                                },
+                                text: "Add a goal",
+                                icon: Icon(
+                                  Icons.add_task,
+                                  color: Theme.of(context).colorScheme.primary,
+                                )),
+                            const SizedBox(height: Constants.paddingBig),
+                          ],
+                        ),
+                      ),
+                    ),
+                    FloatingActionButton(
+                      onPressed: () {
+                        isQuickActionsPanelVisible =
+                            !isQuickActionsPanelVisible;
+                        setState(() {});
+                      },
+                      child: isQuickActionsPanelVisible
+                          ? const Icon(Icons.close)
+                          : const Icon(Icons.add),
+                    ),
+                  ],
+                ),
+              ),
+      ),
     );
   }
 

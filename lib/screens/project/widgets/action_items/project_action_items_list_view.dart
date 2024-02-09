@@ -13,6 +13,7 @@ class ProjectActionItemsListView extends StatefulWidget {
   final void Function(ActionItem actionItem, String newText) onActionItemEdited;
   final void Function(ActionItem actionItem, bool isChecked)
       onActionItemChecked;
+  final void Function(int oldIndex, int newIndex) onActionItemsSwapped;
   final void Function(ActionItem actionItem)? onDeadlinePressed;
 
   const ProjectActionItemsListView({
@@ -22,6 +23,7 @@ class ProjectActionItemsListView extends StatefulWidget {
     required this.selectionState,
     required this.onActionItemEdited,
     required this.onActionItemChecked,
+    required this.onActionItemsSwapped,
     this.onDeadlinePressed,
   });
 
@@ -48,7 +50,7 @@ class ProjectActionItemsListViewState
             ))
           : Column(
               children: [
-                ListView.builder(
+                ReorderableListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
@@ -56,6 +58,11 @@ class ProjectActionItemsListViewState
                   itemBuilder: (context, index) {
                     final actionItem = widget.actionItems[index];
                     return ProjectActionItemView(
+                      key: ValueKey(actionItem.hashCode),
+                      dragStartListener: ReorderableDragStartListener(
+                        index: index,
+                        child: const Icon(Icons.drag_handle),
+                      ),
                       actionItem: actionItem,
                       onActionItemEdited: (String newText) {
                         widget.onActionItemEdited(actionItem, newText);
@@ -78,6 +85,9 @@ class ProjectActionItemsListViewState
                           .contains(actionItem),
                       isSelectionMode: widget.selectionState.isSelectionMode,
                     );
+                  },
+                  onReorder: (int oldIndex, int newIndex) {
+                    widget.onActionItemsSwapped(oldIndex, newIndex);
                   },
                 ),
               ],

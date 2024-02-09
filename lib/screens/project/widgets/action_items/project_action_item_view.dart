@@ -1,4 +1,3 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:droomy/common/constants.dart';
 import 'package:droomy/common/date_utils.dart';
 import 'package:droomy/helpers/audio_helper.dart';
@@ -16,6 +15,7 @@ class ProjectActionItemView extends ConsumerStatefulWidget {
   final void Function()? onDeadlinePressed;
   final bool isSelectionMode;
   final bool isSelected;
+  final ReorderableDragStartListener dragStartListener;
 
   const ProjectActionItemView({
     super.key,
@@ -25,6 +25,7 @@ class ProjectActionItemView extends ConsumerStatefulWidget {
     required this.onActionItemChecked,
     required this.onActionItemSelected,
     required this.isSelectionMode,
+    required this.dragStartListener,
     this.onDeadlinePressed,
   });
 
@@ -55,6 +56,13 @@ class _ProjectActionItemViewState extends ConsumerState<ProjectActionItemView> {
     _configureTextFocusNode();
 
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant ProjectActionItemView oldWidget) {
+    _textEditingController.text = widget.actionItem.shortDescription;
+    _isChecked = widget.actionItem.isCompleted;
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -109,6 +117,8 @@ class _ProjectActionItemViewState extends ConsumerState<ProjectActionItemView> {
               interval: const Duration(seconds: kAnimationDuration),
               child: ListTile(
                   selected: widget.isSelected,
+                  trailing:
+                      !widget.isSelectionMode ? widget.dragStartListener : null,
                   title: Form(
                     key: _formKey,
                     child: GestureDetector(

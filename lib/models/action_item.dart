@@ -16,8 +16,24 @@ class ActionItem {
   /// True if the action item has been completed, false otherwise
   bool isCompleted;
 
+  /// The date the action item was created at
+  DateTime createdAt;
+
+  /// The date the action item was modified at
+  DateTime modifiedAt;
+
+  // TODO: Using createdAt as the hashCode is not ideal
+  @override
+  bool operator ==(Object other) =>
+      other is ActionItem && createdAt == other.createdAt;
+
+  @override
+  int get hashCode => createdAt.hashCode;
+
   ActionItem({
     required this.shortDescription,
+    required this.createdAt,
+    required this.modifiedAt,
     this.longDescription,
     this.deadline,
     this.isCompleted = false,

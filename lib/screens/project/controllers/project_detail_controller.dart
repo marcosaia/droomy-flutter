@@ -45,6 +45,31 @@ class ProjectDetailController extends StateNotifier<ProjectDetailState> {
     await updateProject();
   }
 
+  swapActionItems(int oldIndex, int newIndex) async {
+    final actionItems = project.workflow?.currentStep?.actionPlan?.actionItems;
+    if (actionItems == null) {
+      return;
+    }
+
+    // These two lines are workarounds for ReorderableListView problems
+    if (newIndex > actionItems.length) {
+      newIndex = actionItems.length;
+    }
+    if (oldIndex < newIndex) {
+      newIndex--;
+    }
+
+    // Swap Action Items
+    final temp = actionItems[oldIndex];
+    actionItems[oldIndex] = actionItems[newIndex];
+    actionItems[newIndex] = temp;
+
+    // Update project
+    project.workflow?.currentStep?.actionPlan?.actionItems = actionItems;
+
+    await updateProject();
+  }
+
   goToNextStep() async {
     final workflow = project.workflow;
     if (workflow == null) {
@@ -57,8 +82,20 @@ class ProjectDetailController extends StateNotifier<ProjectDetailState> {
   }
 
   addActionItemWithDescription(String description) {
-    final actionItem = ActionItem(shortDescription: description);
+    final actionItem = ActionItem(
+        shortDescription: description,
+        createdAt: DateTime.now(),
+        modifiedAt: DateTime.now());
     addActionItem(actionItem);
+  }
+
+  updateActionItem(ActionItem actionItem,
+      {String? shortDescription, DateTime? deadline}) {
+    actionItem.shortDescription =
+        shortDescription ?? actionItem.shortDescription;
+    actionItem.deadline = deadline ?? actionItem.deadline;
+
+    updateProject();
   }
 
   removeActionItems(List<ActionItem> actionItemsToRemove) async {

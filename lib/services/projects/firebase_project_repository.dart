@@ -50,10 +50,11 @@ class FirebaseProjectRepository extends ProjectRepository {
 
   Future<void> _fbUpdateProject(
       String projectId, Project updatedProject) async {
+    final updatedProjectJson = updatedProject.toJson();
     await _firestore
         .collection('users/$_userId/projects')
         .doc(projectId)
-        .update(updatedProject.toJson());
+        .update(updatedProjectJson);
   }
 
   Future<void> _fbAddProject(Project newProject) async {
