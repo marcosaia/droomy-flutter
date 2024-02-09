@@ -8,7 +8,10 @@ class FirebaseProjectRepository extends ProjectRepository {
   // Dependencies
   final AuthService _authService;
 
-  // Private utility properties
+  // Private attributes
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Private properties
   String get _userId {
     final userId = _authService.currentUser?.uid;
     if (userId == null) {
@@ -17,20 +20,12 @@ class FirebaseProjectRepository extends ProjectRepository {
     return userId;
   }
 
+  // Constructor
   FirebaseProjectRepository(this._authService);
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  Future<Project> _fbGetProjectById(String projectId) async {
-    DocumentSnapshot projectSnapshot = await _firestore
-        .collection('users/$_userId/projects')
-        .doc(projectId)
-        .get();
-
-    return Project.fromJson(projectSnapshot.data() as Map<String, dynamic>);
-  }
-
-  Future<List<Project>> _fbGetAllProjects() async {
+  // Implementation
+  @override
+  Future<List<Project>> getAll() async {
     List<Project> projects = [];
     var projectSnapshot =
         await _firestore.collection('users/$_userId/projects').get();
@@ -48,38 +43,23 @@ class FirebaseProjectRepository extends ProjectRepository {
     return projects;
   }
 
-  Future<void> _fbUpdateProject(
-      String projectId, Project updatedProject) async {
-    final updatedProjectJson = updatedProject.toJson();
-    await _firestore
-        .collection('users/$_userId/projects')
-        .doc(projectId)
-        .update(updatedProjectJson);
-  }
-
-  Future<void> _fbAddProject(Project newProject) async {
+  @override
+  Future<bool> add(Project project) async {
     // Convert the new project to a map for Firestore
-    Map<String, dynamic> projectMap = newProject.toJson();
+    Map<String, dynamic> projectMap = project.toJson();
 
     // Add the new project to the 'projects' collection
     await _firestore.collection('users/$_userId/projects').add(projectMap);
-  }
 
-  @override
-  Future<bool> add(Project project) async {
-    await _fbAddProject(project);
     return true;
   }
 
   @override
-  Future<List<Project>> getAll() async {
-    return _fbGetAllProjects();
-  }
-
-  @override
   Future<bool> update(Project project) async {
-    print("Updating project with ID ${project.projectId}");
-    await _fbUpdateProject(project.projectId, project);
+    await _firestore
+        .collection('users/$_userId/projects')
+        .doc(project.projectId)
+        .update(project.toJson());
     return true;
   }
 }
