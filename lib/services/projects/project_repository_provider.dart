@@ -6,7 +6,7 @@ import 'package:riverpod/riverpod.dart';
 import '../../models/project.dart';
 
 final projectRepositoryProvider = Provider<ProjectRepository>(
-    (ref) => FirebaseProjectRepository(ref.watch(authProvider)));
+    (ref) => FirebaseProjectRepository(ref.watch(authServiceProvider)));
 
 final projectsFutureProvider = FutureProvider<List<Project>>((ref) {
   return ref.watch(projectRepositoryProvider).getAll();

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../../models/user.dart';
-import '../../project_wizard/screens/project_wizard_title_screen.dart';
+import '../../../../../models/user.dart';
+import '../../../../project_wizard/screens/project_wizard_title_screen.dart';
 
-class DashboardHeader extends StatelessWidget {
-  const DashboardHeader({
+class DashboardOverviewHeader extends StatelessWidget {
+  const DashboardOverviewHeader({
     super.key,
     required this.currentUser,
   });

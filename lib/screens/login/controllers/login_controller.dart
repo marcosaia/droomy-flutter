@@ -6,7 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final loginControllerProvider =
     StateNotifierProvider.autoDispose<LoginController, LoginState>((ref) {
-  return LoginController(LoginState.defaultState(), ref.read(authProvider));
+  return LoginController(
+      LoginState.defaultState(), ref.read(authServiceProvider));
 });
 
 class LoginController extends StateNotifier<LoginState> {

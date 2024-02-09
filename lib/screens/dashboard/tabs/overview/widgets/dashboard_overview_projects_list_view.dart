@@ -1,14 +1,14 @@
 import 'package:droomy/models/workflow_step.dart';
 import 'package:flutter/material.dart';
 
-import '../../../models/project.dart';
-import '../../../models/workflow.dart';
+import '../../../../../models/project.dart';
+import '../../../../../models/workflow.dart';
 
-class ProjectsListView extends StatelessWidget {
+class DashboardOverviewProjectsListView extends StatelessWidget {
   final List<Project> projects;
   final void Function(Project project)? onProjectSelected; // List of projects
 
-  const ProjectsListView(
+  const DashboardOverviewProjectsListView(
       {super.key, required this.projects, this.onProjectSelected});
 
   @override

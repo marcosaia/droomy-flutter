@@ -31,7 +31,7 @@ void main() {
   test('LoginController valid google sign-in', () async {
     final container = ProviderContainer(
       overrides: [
-        authProvider.overrideWithValue(MockAuthServiceProvider()),
+        authServiceProvider.overrideWithValue(MockAuthServiceProvider()),
       ],
     );
 
@@ -57,7 +57,7 @@ void main() {
     expect(container.read(loginControllerProvider).isLoggedIn, true);
 
     // Check if the user has been updated
-    expect(container.read(authProvider).currentUser,
+    expect(container.read(authServiceProvider).currentUser,
         isA<User>().having((u) => u.displayName, 'displayName', 'Mock User'));
   });
 }

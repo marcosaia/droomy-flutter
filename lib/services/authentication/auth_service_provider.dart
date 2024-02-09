@@ -8,7 +8,7 @@ import 'firebase_auth_service.dart';
 final firebaseAuthProvider =
     Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
 
-final authProvider = Provider<AuthService>((ref) {
+final authServiceProvider = Provider<AuthService>((ref) {
   final auth = ref.read(firebaseAuthProvider);
   final storage = ref.read(storageProvider);
   return FirebaseAuthService(auth, storage);

@@ -1,8 +1,8 @@
 import 'package:droomy/common/constants.dart';
 import 'package:flutter/material.dart';
 
-class UserProgressOverviewCard extends StatelessWidget {
-  const UserProgressOverviewCard({
+class DashboardOverviewProgressCard extends StatelessWidget {
+  const DashboardOverviewProgressCard({
     super.key,
   });
 

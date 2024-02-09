@@ -8,12 +8,12 @@ import 'package:droomy/widgets/user_circular_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DashboardEndDrawer extends ConsumerWidget {
-  const DashboardEndDrawer({super.key});
+class DashboardOverviewEndDrawer extends ConsumerWidget {
+  const DashboardOverviewEndDrawer({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final auth = ref.read(authProvider);
+    final auth = ref.read(authServiceProvider);
     final currentUser = auth.currentUser;
     if (currentUser == null) {
       return Container();

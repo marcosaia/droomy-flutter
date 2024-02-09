@@ -1,10 +1,11 @@
 import 'package:droomy/models/project.dart';
 import 'package:droomy/models/user.dart';
 import 'package:droomy/screens/dashboard/controllers/dashboard_controller.dart';
-import 'package:droomy/screens/dashboard/controllers/dashboard_state.dart';
-import 'package:droomy/screens/dashboard/tabs/dashboard_drafts_page_tab.dart';
-import 'package:droomy/screens/dashboard/tabs/dashboard_projects_overview_tab.dart';
-import 'package:droomy/screens/dashboard/widgets/dashboard_end_drawer.dart';
+import 'package:droomy/screens/dashboard/tabs/drafts/dashboard_drafts_page_tab.dart';
+import 'package:droomy/screens/dashboard/tabs/overview/controllers/dashboard_overview_controller.dart';
+import 'package:droomy/screens/dashboard/tabs/overview/controllers/dashboard_overview_state.dart';
+import 'package:droomy/screens/dashboard/tabs/overview/dashboard_overview_tab.dart';
+import 'package:droomy/screens/dashboard/tabs/overview/widgets/dashboard_overview_end_drawer.dart';
 import 'package:droomy/screens/project/screens/project_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,22 +23,11 @@ class DashboardScreen extends ConsumerStatefulWidget {
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   int _currentTabIndex = 0;
 
-  @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(dashboardControllerProvider.notifier).fetchUserProjects();
-    });
-    super.initState();
-  }
-
-  Widget _getCurrentTabWidget(DashboardState state, User currentUser) {
+  Widget _getCurrentTabWidget() {
     switch (_currentTabIndex) {
       // Dashboard Overview
       case 0:
-        return DashboardProjectsOverviewTab(
-          currentUser: currentUser,
-          isProjectsLoading: state.isProjectsLoading,
-          projects: state.projects,
+        return DashboardOverviewTab(
           onProjectSelected: (project) {
             _navigateToProjectDetail(context, project);
           },
@@ -69,8 +59,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           Scaffold.of(context).openEndDrawer();
         },
       ),
-      body: _getCurrentTabWidget(state, currentUser),
-      endDrawer: const DashboardEndDrawer(),
+      body: _getCurrentTabWidget(),
+      endDrawer: const DashboardOverviewEndDrawer(),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
             splashColor: Colors.transparent,
@@ -95,6 +85,5 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   void _navigateToProjectDetail(BuildContext context, Project project) async {
     await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => ProjectDetailScreen(project: project)));
-    ref.read(dashboardControllerProvider.notifier).fetchUserProjects();
   }
 }
