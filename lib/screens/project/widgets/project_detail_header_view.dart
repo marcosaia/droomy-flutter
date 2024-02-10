@@ -1,5 +1,5 @@
 import 'package:droomy/common/constants.dart';
-import 'package:droomy/models/project.dart';
+import 'package:droomy/data/models/project.dart';
 import 'package:flutter/material.dart';
 
 class ProjectDetailHeaderView extends StatelessWidget {

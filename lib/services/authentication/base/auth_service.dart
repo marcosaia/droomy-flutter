@@ -1,4 +1,4 @@
-import '../../../models/user.dart';
+import '../../../data/models/user.dart';
 
 abstract class AuthService {
   User? currentUser;

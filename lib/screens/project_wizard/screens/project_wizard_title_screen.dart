@@ -1,9 +1,9 @@
 import 'package:droomy/screens/project_wizard/controllers/project_wizard_controller.dart';
+import 'package:droomy/screens/project_wizard/screens/project_wizard_confirmation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../widgets/project_title_input_form.dart';
-import 'project_wizard_workflow_screen.dart';
 
 class TitleInputScreen extends ConsumerStatefulWidget {
   const TitleInputScreen({super.key});
@@ -45,16 +45,20 @@ class TitleInputScreenState extends ConsumerState<TitleInputScreen> {
       onPopInvoked: _onPopInvoked,
       child: Scaffold(
           appBar: AppBar(
-            title: const Text('Start a new project'),
+            title: const Text('Start a new song'),
           ),
           body: SingleChildScrollView(
             child: ProjectTitleInputForm(
               controller: controller,
               state: state,
-              onSubmit: () {
-                controller.fetchWorkflows();
+              onSubmit: () async {
+                await controller.setDefaultWorkflow();
+                if (!context.mounted) {
+                  return;
+                }
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: ((context) => const WorkflowListScreen())));
+                    builder: ((context) =>
+                        const ProjectWizardConfirmationScreen())));
               },
             ),
           )),

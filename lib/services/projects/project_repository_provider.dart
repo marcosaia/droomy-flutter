@@ -1,9 +1,8 @@
+import 'package:droomy/data/models/project.dart';
 import 'package:droomy/services/authentication/auth_service_provider.dart';
 import 'package:droomy/services/projects/base/project_repository.dart';
 import 'package:droomy/services/projects/firebase_project_repository.dart';
 import 'package:riverpod/riverpod.dart';
-
-import '../../models/project.dart';
 
 final projectRepositoryProvider = Provider<ProjectRepository>(
     (ref) => FirebaseProjectRepository(ref.watch(authServiceProvider)));

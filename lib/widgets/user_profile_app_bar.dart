@@ -1,7 +1,7 @@
+import 'package:droomy/data/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/user.dart';
 import 'user_circular_button.dart';
 
 class UserProfileAppBar extends ConsumerWidget implements PreferredSizeWidget {

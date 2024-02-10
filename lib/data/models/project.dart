@@ -1,5 +1,5 @@
-import 'package:droomy/models/action_item.dart';
-import 'package:droomy/models/action_plan.dart';
+import 'package:droomy/data/models/action_item.dart';
+import 'package:droomy/data/models/action_plan.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'workflow.dart';

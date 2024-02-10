@@ -1,5 +1,5 @@
 import 'package:droomy/common/constants.dart';
-import 'package:droomy/models/action_item.dart';
+import 'package:droomy/data/models/action_item.dart';
 import 'package:droomy/screens/project/widgets/action_items/project_action_item_view.dart';
 import 'package:droomy/screens/project/widgets/action_items/project_action_items_selection_controller.dart';
 import 'package:droomy/screens/project/widgets/action_items/project_action_items_selection_state.dart';

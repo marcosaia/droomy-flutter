@@ -1,8 +1,8 @@
-import 'package:droomy/models/workflow_step.dart';
+import 'package:droomy/data/models/workflow_step.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../models/project.dart';
-import '../../../../../models/workflow.dart';
+import '../../../../../data/models/project.dart';
+import '../../../../../data/models/workflow.dart';
 
 class DashboardOverviewProjectsListView extends StatelessWidget {
   final List<Project> projects;

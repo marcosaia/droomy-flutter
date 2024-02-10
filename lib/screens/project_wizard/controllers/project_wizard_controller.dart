@@ -1,12 +1,11 @@
 import 'package:droomy/common/constants.dart';
-import 'package:droomy/models/workflow.dart';
+import 'package:droomy/data/models/project.dart';
+import 'package:droomy/data/models/workflow.dart';
 import 'package:droomy/screens/base/view_state.dart';
 import 'package:droomy/services/projects/project_repository_provider.dart';
 import 'package:droomy/services/workflows/base/workflow_repository.dart';
 import 'package:droomy/services/workflows/workflow_repository_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../models/project.dart';
 import '../../../services/projects/base/project_repository.dart';
 import 'project_wizard_state.dart';
 
@@ -50,6 +49,15 @@ class ProjectWizardController extends StateNotifier<ProjectWizardState> {
     var workflows = await _workflowRepository.getDefaultWorkflows();
     state = state.copyWith(
         workflows: workflows, viewState: const ViewStateLoaded());
+  }
+
+  // We are working on a single workflow for now to simplify development
+  Future<void> setDefaultWorkflow() async {
+    final workflows = await _workflowRepository.getDefaultWorkflows();
+    if (workflows.isEmpty) {
+      throw Exception("Default Workflows list cannot be empty");
+    }
+    setWorkflow(workflows.first);
   }
 
   void setWorkflow(Workflow workflow) {

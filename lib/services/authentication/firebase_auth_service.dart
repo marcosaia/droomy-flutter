@@ -2,7 +2,7 @@ import 'package:droomy/services/authentication/base/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import '../../models/user.dart' as droomy_user;
+import '../../data/models/user.dart' as droomy_user;
 import '../storage/base/storage.dart';
 
 class FirebaseAuthService extends AuthService {

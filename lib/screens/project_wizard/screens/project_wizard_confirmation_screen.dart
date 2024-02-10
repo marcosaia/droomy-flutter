@@ -5,12 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../dashboard/screens/dashboard_screen.dart';
 
-class ConfirmationScreen extends ConsumerWidget {
-  final String title;
-
-  const ConfirmationScreen({
+class ProjectWizardConfirmationScreen extends ConsumerWidget {
+  const ProjectWizardConfirmationScreen({
     super.key,
-    required this.title,
   });
 
   @override
@@ -32,7 +29,7 @@ class ConfirmationScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: const Text("Overview"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(Constants.paddingRegular),
@@ -49,11 +46,6 @@ class ConfirmationScreen extends ConsumerWidget {
                     .textTheme
                     .headlineLarge
                     ?.copyWith(color: Theme.of(context).colorScheme.primary)),
-            const SizedBox(height: Constants.paddingRegular),
-            Text(
-              'Using our dream flow: ${workflow.displayName}',
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
             const SizedBox(height: Constants.paddingBig),
             Row(
               children: [
@@ -78,7 +70,7 @@ class ConfirmationScreen extends ConsumerWidget {
                             (Route<dynamic> route) => false);
                       }
                     },
-                    child: const Text('CONFIRM'),
+                    child: const Text('START'),
                   ),
                 ),
               ],

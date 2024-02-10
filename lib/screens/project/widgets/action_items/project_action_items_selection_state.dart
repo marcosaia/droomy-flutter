@@ -1,4 +1,4 @@
-import 'package:droomy/models/action_item.dart';
+import 'package:droomy/data/models/action_item.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'project_action_items_selection_state.freezed.dart';

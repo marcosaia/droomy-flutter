@@ -1,4 +1,4 @@
-import 'package:droomy/models/action_item.dart';
+import 'package:droomy/data/models/action_item.dart';
 import 'package:droomy/screens/project/widgets/action_items/project_action_items_selection_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
