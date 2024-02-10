@@ -61,7 +61,7 @@ class _ProjectTitleInputFormState extends State<ProjectTitleInputForm> {
             maxLength: Constants.projectTitleMaxLength,
             style: Theme.of(context).textTheme.headlineMedium,
             decoration: const InputDecoration(
-              labelText: 'My next project is called',
+              labelText: 'My next song is called',
               border: OutlineInputBorder(),
             ),
             onChanged: (value) {

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:droomy/data/models/project.dart';
 import 'package:droomy/services/authentication/base/auth_service.dart';
 
-import '../../models/project.dart';
 import './base/project_repository.dart';
 
 class FirebaseProjectRepository extends ProjectRepository {

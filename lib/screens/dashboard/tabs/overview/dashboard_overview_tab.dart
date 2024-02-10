@@ -1,8 +1,7 @@
 import 'package:droomy/common/constants.dart';
 import 'package:droomy/common/utils.dart';
-import 'package:droomy/models/project.dart';
+import 'package:droomy/data/models/project.dart';
 import 'package:droomy/screens/dashboard/tabs/overview/controllers/dashboard_overview_controller.dart';
-import 'package:droomy/screens/dashboard/tabs/overview/controllers/dashboard_overview_state.dart';
 import 'package:droomy/screens/dashboard/tabs/overview/widgets/dashboard_overview_header.dart';
 import 'package:droomy/screens/dashboard/tabs/overview/widgets/dashboard_overview_projects_list_view.dart';
 import 'package:droomy/screens/dashboard/tabs/overview/widgets/dashboard_overview_progress_card.dart';
@@ -76,7 +75,7 @@ class _DashboardOverviewTabState extends ConsumerState<DashboardOverviewTab> {
           // Projects List and Filters
           Row(
             children: [
-              Text('Your projects',
+              Text('Your songs',
                   style: Theme.of(context).textTheme.headlineMedium),
               const Spacer(),
               GestureDetector(

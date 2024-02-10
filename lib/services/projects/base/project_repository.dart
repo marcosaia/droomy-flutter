@@ -1,4 +1,4 @@
-import '../../../models/project.dart';
+import 'package:droomy/data/models/project.dart';
 
 abstract class ProjectRepository {
   Future<List<Project>> getAll();

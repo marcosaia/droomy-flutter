@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:droomy/models/action_item.dart';
-import 'package:droomy/models/action_plan.dart';
-import 'package:droomy/models/project.dart';
+import 'package:droomy/data/models/action_item.dart';
+import 'package:droomy/data/models/action_plan.dart';
+import 'package:droomy/data/models/project.dart';
 import 'package:droomy/screens/project/controllers/project_detail_state.dart';
 import 'package:droomy/services/projects/base/project_repository.dart';
 import 'package:droomy/services/projects/project_repository_provider.dart';

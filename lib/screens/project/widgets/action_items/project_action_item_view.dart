@@ -1,7 +1,7 @@
 import 'package:droomy/common/constants.dart';
 import 'package:droomy/common/date_utils.dart';
 import 'package:droomy/helpers/audio_helper.dart';
-import 'package:droomy/models/action_item.dart';
+import 'package:droomy/data/models/action_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

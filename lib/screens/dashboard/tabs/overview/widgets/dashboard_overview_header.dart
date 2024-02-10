@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../models/user.dart';
+import '../../../../../data/models/user.dart';
 import '../../../../project_wizard/screens/project_wizard_title_screen.dart';
 
 class DashboardOverviewHeader extends StatelessWidget {
@@ -26,7 +26,7 @@ class DashboardOverviewHeader extends StatelessWidget {
                       builder: (BuildContext context) =>
                           const TitleInputScreen()))
                 },
-            child: const Text("NEW PROJECT"))
+            child: const Text("NEW SONG"))
       ],
     );
   }

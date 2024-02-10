@@ -39,6 +39,13 @@ class ActionItem {
     this.isCompleted = false,
   });
 
+  factory ActionItem.simpleGoal(String description) {
+    return ActionItem(
+        shortDescription: description,
+        createdAt: DateTime.now(),
+        modifiedAt: DateTime.now());
+  }
+
   factory ActionItem.fromJson(Map<String, dynamic> json) =>
       _$ActionItemFromJson(json);
 

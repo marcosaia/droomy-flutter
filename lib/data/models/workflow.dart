@@ -15,9 +15,6 @@ class Workflow {
   /// An optional short description of the workflow
   String shortDescription = "";
 
-  /// A thumbnail URL for the workflow
-  String thumbnailUrl;
-
   /// The list of steps that the workflow is made of
   List<WorkflowStep> steps;
 
@@ -36,7 +33,6 @@ class Workflow {
   Workflow(
       {required this.identifier,
       required this.displayName,
-      required this.thumbnailUrl,
       this.shortDescription = "",
       this.steps = const [],
       this.currentStepIndex = 0});

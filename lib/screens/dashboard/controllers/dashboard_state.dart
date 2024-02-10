@@ -1,4 +1,4 @@
-import 'package:droomy/models/user.dart';
+import 'package:droomy/data/models/user.dart';
 import 'package:droomy/screens/base/view_state.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 

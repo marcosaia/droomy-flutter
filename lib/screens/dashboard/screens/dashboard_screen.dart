@@ -1,4 +1,4 @@
-import 'package:droomy/models/project.dart';
+import 'package:droomy/data/models/project.dart';
 import 'package:droomy/screens/dashboard/controllers/dashboard_controller.dart';
 import 'package:droomy/screens/dashboard/tabs/drafts/dashboard_drafts_page_tab.dart';
 import 'package:droomy/screens/dashboard/tabs/overview/dashboard_overview_tab.dart';
