@@ -1,8 +1,6 @@
 import 'package:droomy/common/constants.dart';
 import 'package:droomy/data/models/project.dart';
 import 'package:droomy/helpers/audio_helper.dart';
-import 'package:droomy/screens/dashboard/screens/dashboard_screen.dart';
-import 'package:droomy/widgets/user_profile_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';

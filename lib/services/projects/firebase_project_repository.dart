@@ -7,9 +7,7 @@ import './base/project_repository.dart';
 class FirebaseProjectRepository extends ProjectRepository {
   // Dependencies
   final AuthService _authService;
-
-  // Private attributes
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore;
 
   // Private properties
   String get _userId {
@@ -21,7 +19,7 @@ class FirebaseProjectRepository extends ProjectRepository {
   }
 
   // Constructor
-  FirebaseProjectRepository(this._authService);
+  FirebaseProjectRepository(this._authService, this._firestore);
 
   // Implementation
   @override
@@ -49,14 +47,14 @@ class FirebaseProjectRepository extends ProjectRepository {
     Map<String, dynamic> projectMap = project.toJson();
 
     // Add the new project to the 'projects' collection
-    await _firestore.collection('users/$_userId/projects').add(projectMap);
+    _firestore.collection('users/$_userId/projects').add(projectMap);
 
     return true;
   }
 
   @override
   Future<bool> update(Project project) async {
-    await _firestore
+    _firestore
         .collection('users/$_userId/projects')
         .doc(project.projectId)
         .update(project.toJson());
