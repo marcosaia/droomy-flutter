@@ -1,3 +1,4 @@
+import 'package:droomy/data/models/project_state.dart';
 import 'package:droomy/screens/base/view_state.dart';
 import 'package:droomy/screens/dashboard/tabs/overview/controllers/dashboard_overview_state.dart';
 import 'package:droomy/services/authentication/auth_service_provider.dart';
@@ -27,8 +28,12 @@ class DashboardOverviewController
     state = state.copyWith(
         viewState: const ViewStateLoading(), isProjectsLoading: true);
 
-    final projects = await _projectRepository.getAll();
+    final projects = (await _projectRepository.getAll())
+        .where((project) => project.state == ProjectState.workInProgress)
+        .toList();
+
     projects.sort((pr1, pr2) => pr1.createdAt.isAfter(pr2.createdAt) ? -1 : 1);
+
     state = state.copyWith(
         projects: projects,
         viewState: const ViewStateLoaded(),

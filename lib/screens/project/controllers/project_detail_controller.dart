@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:droomy/data/models/action_item.dart';
 import 'package:droomy/data/models/action_plan.dart';
 import 'package:droomy/data/models/project.dart';
+import 'package:droomy/data/models/project_state.dart';
 import 'package:droomy/screens/project/controllers/project_detail_state.dart';
 import 'package:droomy/services/projects/base/project_repository.dart';
 import 'package:droomy/services/projects/project_repository_provider.dart';
@@ -126,9 +127,21 @@ class ProjectDetailController extends StateNotifier<ProjectDetailState> {
     if (workflow == null) {
       return;
     }
+
+    // If this is the last step, set it ready for distribution
+    if (workflow.currentStepIndex == workflow.steps.length - 1) {
+      await completeProject();
+      return;
+    }
+
     workflow.currentStepIndex =
         min(workflow.currentStepIndex + 1, workflow.steps.length - 1);
 
+    await updateProject();
+  }
+
+  completeProject() async {
+    project.state = ProjectState.readyForDistribution;
     await updateProject();
   }
 

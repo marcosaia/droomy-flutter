@@ -14,7 +14,7 @@ class DashboardOverviewTab extends ConsumerStatefulWidget {
     required this.onProjectSelected,
   });
 
-  final void Function(Project project) onProjectSelected;
+  final Future<void> Function(Project project) onProjectSelected;
 
   @override
   ConsumerState<DashboardOverviewTab> createState() =>
@@ -91,8 +91,8 @@ class _DashboardOverviewTabState extends ConsumerState<DashboardOverviewTab> {
                 )
               : DashboardOverviewProjectsListView(
                   projects: state.projects,
-                  onProjectSelected: (project) {
-                    widget.onProjectSelected(project);
+                  onProjectSelected: (project) async {
+                    await widget.onProjectSelected(project);
                     controller.fetchUserProjects();
                   })
         ],

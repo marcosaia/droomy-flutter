@@ -1,10 +1,12 @@
 import 'package:droomy/common/constants.dart';
 import 'package:droomy/common/theme.dart';
 import 'package:droomy/common/utils.dart';
+import 'package:droomy/data/models/project_state.dart';
 import 'package:droomy/helpers/audio_helper.dart';
 import 'package:droomy/data/models/action_item.dart';
 import 'package:droomy/data/models/project.dart';
 import 'package:droomy/screens/project/controllers/project_detail_controller.dart';
+import 'package:droomy/screens/project/screens/project_ready_screen.dart';
 import 'package:droomy/screens/project/widgets/action_items/project_action_items_list_view.dart';
 import 'package:droomy/screens/project/widgets/action_items/project_action_items_selection_controller.dart';
 import 'package:droomy/screens/project/widgets/dialogs/project_goal_dialog.dart';
@@ -47,6 +49,15 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
     final project = state.project;
     if (project == null) {
       Future.microtask(() => Navigator.pop(context));
+      return Container();
+    }
+
+    // If the project is ready for distribution we navigate to next screen
+    if (project.state == ProjectState.readyForDistribution) {
+      Future.microtask(() => Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (builder) => ProjectReadyScreen(project: project))));
       return Container();
     }
 
@@ -241,19 +252,31 @@ class ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
     final provider = projectDetailControllerProvider(widget.project);
     final state = ref.read(provider);
 
-    // Assert project is not null
+    // Assert project and workflow are not null
     final project = state.project;
-    if (project == null) {
+    final workflow = project?.workflow;
+    if (project == null || workflow == null) {
       return;
     }
 
-    showConfirmationDialog(context,
-        title: 'Confirm',
-        content: project.currentNumOfActionItems > 0
-            ? "Well done! Are you ready to go to the next step?"
-            : "You haven't added or completed any goals. Are you sure you want to go to the next step?",
+    final isLastStep = workflow.currentStepIndex == workflow.steps.length - 1;
+
+    var message = "";
+    if (isLastStep) {
+      message = project.currentNumOfActionItems > 0
+          ? "Well done! Are you ready to complete your song?"
+          : "You haven't added or completed any goals. Are you sure you want to complete your song?";
+    } else {
+      message = project.currentNumOfActionItems > 0
+          ? "Well done! Are you ready to go to the next step?"
+          : "You haven't added or completed any goals. Are you sure you want to go to the next step?";
+    }
+
+    showConfirmationDialog(context, title: 'Confirm', content: message,
         onConfirm: () {
-      ref.read(audioHelperProvider).playVictorySound();
+      if (!isLastStep) {
+        ref.read(audioHelperProvider).playSuccessSound();
+      }
       ref.read(provider.notifier).goToNextStep();
     });
   }
