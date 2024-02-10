@@ -97,6 +97,7 @@ class _ProjectActionItemViewState extends ConsumerState<ProjectActionItemView> {
                 _toggleSelection();
               }
             : null,
+
         // On long press, toggle the selection on this item
         onLongPress: () {
           _toggleSelection();
@@ -127,8 +128,10 @@ class _ProjectActionItemViewState extends ConsumerState<ProjectActionItemView> {
               // The animation is enabled when manually triggered or auto-loops
               // when the item is selected
               enabled: _shouldAnimate || widget.isSelected,
+
               child: ListTile(
                   selected: widget.isSelected,
+
                   // Disable the drag handler when selection mode is ON
                   trailing:
                       !widget.isSelectionMode ? widget.dragStartListener : null,
@@ -138,7 +141,7 @@ class _ProjectActionItemViewState extends ConsumerState<ProjectActionItemView> {
                     key: _formKey,
                     child: GestureDetector(
                       onTap: () {
-                        // On tap, select the item if seleciton mode is ON
+                        // On tap, select the item if selection mode is ON
                         if (widget.isSelectionMode) {
                           _toggleSelection();
                         }
@@ -160,6 +163,7 @@ class _ProjectActionItemViewState extends ConsumerState<ProjectActionItemView> {
                       // Switch between a TextFormField or a simple Text depending on
                       // whether the title has been made editable by a user tap
                       child: _isTextFieldEnabled
+                          // TODO: Extract Text Form Field widget
                           ? TextFormField(
                               autofocus: true,
                               enabled: !(_isChecked ||
