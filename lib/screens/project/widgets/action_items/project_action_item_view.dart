@@ -91,41 +91,59 @@ class _ProjectActionItemViewState extends ConsumerState<ProjectActionItemView> {
               : Constants.paddingSmall,
           horizontal: widget.isSelected ? Constants.paddingRegular : 0.0),
       child: GestureDetector(
+        // On tap, select this item if selection mode is ON
         onTap: widget.isSelectionMode
             ? () {
                 _toggleSelection();
               }
             : null,
+        // On long press, toggle the selection on this item
         onLongPress: () {
           _toggleSelection();
         },
+
+        // AnimatedContainer is used for transitions between checked and unchecked
         child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
+
+            // Padding and decoration varies depending on whether the item is checked or not
             padding: EdgeInsets.symmetric(
                 vertical: _isChecked ? 0 : 8.0, horizontal: 0.0),
             decoration: BoxDecoration(
                 color: widget.isSelected
                     ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
                     : Theme.of(context).colorScheme.background,
-                border: _getBorder(context),
+                border: _getBorder(),
                 borderRadius: const BorderRadius.all(Radius.circular(16.0))),
+
+            // Shimmer is used to trigger a "gradient animation" when necessary
             child: Shimmer(
+              // Configure the animation
               duration: const Duration(seconds: kAnimationDuration),
-              enabled: _shouldAnimate || widget.isSelected,
               color: Theme.of(context).colorScheme.primary,
               colorOpacity: 0.3,
               interval: const Duration(seconds: kAnimationDuration),
+
+              // The animation is enabled when manually triggered or auto-loops
+              // when the item is selected
+              enabled: _shouldAnimate || widget.isSelected,
               child: ListTile(
                   selected: widget.isSelected,
+                  // Disable the drag handler when selection mode is ON
                   trailing:
                       !widget.isSelectionMode ? widget.dragStartListener : null,
+
+                  // The title is a form, in order to make the text editable
                   title: Form(
                     key: _formKey,
                     child: GestureDetector(
                       onTap: () {
+                        // On tap, select the item if seleciton mode is ON
                         if (widget.isSelectionMode) {
                           _toggleSelection();
-                        } else {
+                        }
+                        // Otherwise make it editable, unless it is checked or selected
+                        else {
                           if (!_isChecked && !widget.isSelected) {
                             setState(() {
                               _isTextFieldEnabled = true;
@@ -133,9 +151,14 @@ class _ProjectActionItemViewState extends ConsumerState<ProjectActionItemView> {
                           }
                         }
                       },
+
+                      // Toggle the selection if the user taps on the title
                       onLongPress: () {
                         _toggleSelection();
                       },
+
+                      // Switch between a TextFormField or a simple Text depending on
+                      // whether the title has been made editable by a user tap
                       child: _isTextFieldEnabled
                           ? TextFormField(
                               autofocus: true,
@@ -145,6 +168,7 @@ class _ProjectActionItemViewState extends ConsumerState<ProjectActionItemView> {
                               controller: _textEditingController,
                               focusNode: _focusNode,
                               onEditingComplete: () {
+                                // Finalize the text and unfocus the text field
                                 if (_isValid) {
                                   final newText =
                                       _textEditingController.text.trim();
@@ -189,9 +213,10 @@ class _ProjectActionItemViewState extends ConsumerState<ProjectActionItemView> {
                               style: _textFieldTheme()),
                     ),
                   ),
-                  subtitle: _isChecked
-                      ? null
-                      : Padding(
+
+                  // When the item is checked, the subtitle is hidden
+                  subtitle: !_isChecked
+                      ? Padding(
                           padding: const EdgeInsets.symmetric(
                               vertical: Constants.paddingSmall),
                           child: GestureDetector(
@@ -224,7 +249,10 @@ class _ProjectActionItemViewState extends ConsumerState<ProjectActionItemView> {
                               ],
                             ),
                           ),
-                        ),
+                        )
+                      : null,
+
+                  // Leading Checkbox, frozen when the item is selected
                   leading: IgnorePointer(
                     ignoring: widget.isSelected,
                     child: Checkbox(
@@ -292,12 +320,13 @@ class _ProjectActionItemViewState extends ConsumerState<ProjectActionItemView> {
   }
 
   _textFieldTheme() {
-    return Theme.of(context).textTheme.headlineSmall?.copyWith(
-        fontSize: _isChecked ? 20.0 : null,
-        decoration: _isChecked ? TextDecoration.none : TextDecoration.none);
+    return Theme.of(context)
+        .textTheme
+        .headlineSmall
+        ?.copyWith(fontSize: _isChecked ? 20.0 : null);
   }
 
-  BoxBorder? _getBorder(BuildContext context) {
+  BoxBorder? _getBorder() {
     if (widget.isSelected) {
       return Border.all(
         color: Theme.of(context).colorScheme.secondary,
