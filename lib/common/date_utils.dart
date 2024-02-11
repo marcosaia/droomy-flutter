@@ -30,4 +30,23 @@ extension DateTimeExtension on DateTime {
 
     return RemainingTime('Less than a minute left', true);
   }
+
+  DateTime closestFridayAfter(int days) {
+    // Add 21 days to the provided date
+    DateTime targetDate = add(Duration(days: days));
+
+    // If it's a friday just return it
+    if (targetDate.weekday == 5) {
+      return targetDate;
+    }
+
+    // Look forward
+    if (targetDate.weekday >= 2 && targetDate.weekday < 5) {
+      return targetDate.add(Duration(days: 5 - targetDate.weekday));
+    }
+
+    // Look backwards
+    final diff = targetDate.weekday - 5;
+    return targetDate.subtract(Duration(days: diff > 0 ? diff : 3));
+  }
 }

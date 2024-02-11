@@ -25,6 +25,12 @@ class MockAuthServiceProvider extends AuthService {
   Future<bool> signOut() async {
     return true;
   }
+
+  @override
+  Future<User?> autoSignIn() {
+    // TODO: implement autoSignIn
+    throw UnimplementedError();
+  }
 }
 
 void main() {

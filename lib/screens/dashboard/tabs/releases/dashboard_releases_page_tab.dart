@@ -1,7 +1,9 @@
 import 'package:droomy/common/constants.dart';
 import 'package:droomy/common/utils.dart';
+import 'package:droomy/data/models/project.dart';
 import 'package:droomy/screens/dashboard/tabs/releases/controllers/dashboard_releases_controller.dart';
 import 'package:droomy/screens/dashboard/tabs/releases/widgets/dashboard_releases_list_view.dart';
+import 'package:droomy/screens/release/screens/release_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -58,7 +60,12 @@ class _DashboardReleasesPageTabState
                 Text(_subheaderText),
                 const SizedBox(height: Constants.paddingRegular),
                 state.viewState.map(loaded: (_) {
-                  return DashboardReleasesListView(releases: state.releases);
+                  return DashboardReleasesListView(
+                    releases: state.releases,
+                    onReleaseSelected: (project) {
+                      _navigateToReleaseDetail(project);
+                    },
+                  );
                 }, loading: (_) {
                   return const Expanded(
                     child: Center(child: CircularProgressIndicator()),
@@ -68,6 +75,12 @@ class _DashboardReleasesPageTabState
                 })
               ])),
     );
+  }
+
+  Future<void> _navigateToReleaseDetail(Project project) async {
+    Navigator.of(context).push(MaterialPageRoute(builder: (builder) {
+      return ReleaseDetailScreen(project: project);
+    }));
   }
 
   String get _subheaderText {

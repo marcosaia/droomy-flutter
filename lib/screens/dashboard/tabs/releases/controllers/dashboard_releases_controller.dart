@@ -25,7 +25,7 @@ class DashboardReleasesController
     final projects = (await _projectRepository.getAll())
         .where((project) =>
             project.state == ProjectState.readyForDistribution ||
-            project.state == ProjectState.distributed)
+            project.state == ProjectState.marketing)
         .toList();
 
     projects.sort((pr1, pr2) => pr1.createdAt.isAfter(pr2.createdAt) ? -1 : 1);

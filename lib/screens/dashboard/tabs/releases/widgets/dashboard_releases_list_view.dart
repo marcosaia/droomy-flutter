@@ -5,8 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DashboardReleasesListView extends ConsumerStatefulWidget {
   final List<Project> releases;
+  final void Function(Project project) onReleaseSelected;
 
-  const DashboardReleasesListView({super.key, required this.releases});
+  const DashboardReleasesListView(
+      {super.key, required this.releases, required this.onReleaseSelected});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() {
@@ -28,21 +30,26 @@ class _DashboardReleasesListViewState
           itemBuilder: (context, index) {
             final release = widget.releases[index];
 
-            return Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: Constants.paddingSmall),
-              child: Card(
-                child: ListTile(
-                  key: ValueKey(release.createdAt.hashCode),
-                  title: Padding(
-                    padding: const EdgeInsets.all(Constants.paddingRegular),
-                    child: Text(release.title,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.bold)),
+            return GestureDetector(
+              onTap: () {
+                widget.onReleaseSelected(release);
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    vertical: Constants.paddingSmall),
+                child: Card(
+                  child: ListTile(
+                    key: ValueKey(release.createdAt.hashCode),
+                    title: Padding(
+                      padding: const EdgeInsets.all(Constants.paddingRegular),
+                      child: Text(release.title,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(fontWeight: FontWeight.bold)),
+                    ),
+                    trailing: const Icon(Icons.arrow_circle_right),
                   ),
-                  trailing: Icon(Icons.arrow_circle_right),
                 ),
               ),
             );
