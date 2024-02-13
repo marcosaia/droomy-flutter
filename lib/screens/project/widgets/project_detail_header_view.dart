@@ -27,17 +27,20 @@ class ProjectDetailHeaderView extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Hero(
-                      tag: "project_title_${project.projectId}",
-                      child: Text(
-                        project.title,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context)
-                            .textTheme
-                            .displaySmall
-                            ?.copyWith(
-                                color:
-                                    Theme.of(context).colorScheme.onBackground),
+                    Expanded(
+                      child: Hero(
+                        tag: "project_title_${project.projectId}",
+                        child: Text(
+                          project.title,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .displaySmall
+                              ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground),
+                        ),
                       ),
                     ),
                   ],

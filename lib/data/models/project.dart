@@ -1,5 +1,6 @@
 import 'package:droomy/data/models/action_item.dart';
 import 'package:droomy/data/models/action_plan.dart';
+import 'package:droomy/data/models/project_state.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'workflow.dart';
@@ -17,11 +18,17 @@ class Project {
   /// The project workflow
   Workflow? workflow;
 
+  /// True if the project is ready to be distributed, false otherwise
+  ProjectState state;
+
   // Timestamp of when the project was created
   DateTime createdAt;
 
   // Timestamp of the last time the project was updated
   DateTime modifiedAt;
+
+  // Planned release date
+  DateTime? plannedReleaseDate;
 
   // Utility getter for current action plan
   ActionPlan? get currentActionPlan {
@@ -43,7 +50,8 @@ class Project {
       required this.title,
       required this.workflow,
       required this.createdAt,
-      required this.modifiedAt});
+      required this.modifiedAt,
+      this.state = ProjectState.workInProgress});
 
   factory Project.fromJson(Map<String, dynamic> json) =>
       _$ProjectFromJson(json);

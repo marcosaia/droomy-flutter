@@ -10,6 +10,7 @@ class Constants {
   static const int projectTitleMaxLength = 44;
 
   // UI Related constants
+  static const double paddingExtraSmall = 4;
   static const double paddingSmall = 8;
   static const double paddingRegular = 16;
   static const double paddingBig = 32;

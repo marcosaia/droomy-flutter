@@ -8,6 +8,7 @@ part 'dashboard_state.freezed.dart';
 class DashboardState with _$DashboardState {
   const factory DashboardState({
     User? currentUser,
+    @Default(0) int numOfPendingReleases,
     required ViewState viewState,
   }) = _DashboardState;
 

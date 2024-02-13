@@ -1,9 +1,10 @@
 import 'package:droomy/data/models/project.dart';
 import 'package:droomy/screens/dashboard/controllers/dashboard_controller.dart';
-import 'package:droomy/screens/dashboard/tabs/drafts/dashboard_drafts_page_tab.dart';
 import 'package:droomy/screens/dashboard/tabs/overview/dashboard_overview_tab.dart';
 import 'package:droomy/screens/dashboard/tabs/overview/widgets/dashboard_overview_end_drawer.dart';
+import 'package:droomy/screens/dashboard/tabs/releases/dashboard_releases_page_tab.dart';
 import 'package:droomy/screens/project/screens/project_detail_screen.dart';
+import 'package:droomy/widgets/number_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../widgets/user_profile_app_bar.dart';
@@ -27,16 +28,23 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       // Dashboard Overview
       case 0:
         return DashboardOverviewTab(
-          onProjectSelected: (project) {
-            _navigateToProjectDetail(project);
-          },
+          onProjectSelected: _navigateToProjectDetail,
         );
-      // Drafts
+      // Releases
       case 1:
-        return const DashboardDraftsPageTab();
+        return const DashboardReleasesPageTab();
     }
 
     return Container();
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final controller = ref.read(dashboardControllerProvider.notifier);
+      controller.fetchData();
+    });
+    super.initState();
   }
 
   @override
@@ -72,18 +80,30 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 _currentTabIndex = index;
               });
             },
-            items: const [
-              BottomNavigationBarItem(
+            items: [
+              const BottomNavigationBarItem(
                   icon: Icon(Icons.dashboard), label: 'Overview'),
-              BottomNavigationBarItem(icon: Icon(Icons.draw), label: 'Drafts'),
+              BottomNavigationBarItem(
+                  icon: Stack(children: [
+                    const Icon(Icons.rocket_launch),
+                    Visibility(
+                      visible: state.numOfPendingReleases > 0,
+                      child: NumberBadge(
+                        badgeCount: state.numOfPendingReleases,
+                      ),
+                    ),
+                  ]),
+                  label: 'Releases'),
             ]),
       ),
     );
   }
 
   // Navigates to Project Detail screen
-  void _navigateToProjectDetail(Project project) async {
+  Future<void> _navigateToProjectDetail(Project project) async {
     await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => ProjectDetailScreen(project: project)));
+    final controller = ref.read(dashboardControllerProvider.notifier);
+    controller.fetchData();
   }
 }
