@@ -24,10 +24,16 @@ To use Droomy, follow these steps:
 2. Navigate to the project directory:
 
    ```bash
-   cd Droomy
+   cd droomy-flutter
    ```
 
-3. Run the app:
+3. Download dependencies
+
+   ```bash
+   flutter pub get
+   ```
+
+4. Run the app:
 
    ```bash
    flutter run
