@@ -55,9 +55,4 @@ Contributions to Droomy are welcome! To contribute:
 ## Credits
 
 Droomy is developed and maintained by [Marco Saia](https://github.com/marcosaia).
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
 ---
