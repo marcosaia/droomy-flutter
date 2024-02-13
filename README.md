@@ -2,6 +2,13 @@
 
 Droomy is an intuitive mobile application that allows users to create projects using predefined templates known as Workflows. Each Workflow consists of a series of customizable steps, each equipped with a variety of planning tools such as TODO lists, notes, reminders, and more. Developed using Flutter, Riverpod, MVVM architecture, and Firebase for authentication and data synchronization, Droomy provides a seamless project management experience.
 
+## Preview
+A quick preview video on youtube:
+
+[![Droomy Preview Youtube Video](https://img.youtube.com/vi/4qYfYrXgapQ/0.jpg)](https://www.youtube.com/watch?v=4qYfYrXgapQ)
+
+Please note that the app is still work in progress and this is just a POC.
+
 ## Features
 
 - **Workflow Creation**: Easily create projects using pre-designed templates called Workflows.
