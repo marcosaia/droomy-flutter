@@ -27,6 +27,9 @@ class Project {
   // Timestamp of the last time the project was updated
   DateTime modifiedAt;
 
+  // Planned release date
+  DateTime? plannedReleaseDate;
+
   // Utility getter for current action plan
   ActionPlan? get currentActionPlan {
     return workflow?.currentStep?.actionPlan;

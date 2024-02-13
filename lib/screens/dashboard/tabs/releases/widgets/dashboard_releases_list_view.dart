@@ -2,6 +2,7 @@ import 'package:droomy/common/constants.dart';
 import 'package:droomy/data/models/project.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 class DashboardReleasesListView extends ConsumerStatefulWidget {
   final List<Project> releases;
@@ -49,6 +50,21 @@ class _DashboardReleasesListViewState
                               ?.copyWith(fontWeight: FontWeight.bold)),
                     ),
                     trailing: const Icon(Icons.arrow_circle_right),
+                    subtitle: release.plannedReleaseDate != null
+                        ? Padding(
+                            padding:
+                                const EdgeInsets.all(Constants.paddingRegular),
+                            child: Text(
+                                "Release on ${DateFormat('dd/MM/yyyy').format(release.plannedReleaseDate!)}",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge
+                                    ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary)),
+                          )
+                        : null,
                   ),
                 ),
               ),

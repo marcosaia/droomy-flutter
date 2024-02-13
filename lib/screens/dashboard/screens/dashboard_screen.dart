@@ -4,6 +4,7 @@ import 'package:droomy/screens/dashboard/tabs/overview/dashboard_overview_tab.da
 import 'package:droomy/screens/dashboard/tabs/overview/widgets/dashboard_overview_end_drawer.dart';
 import 'package:droomy/screens/dashboard/tabs/releases/dashboard_releases_page_tab.dart';
 import 'package:droomy/screens/project/screens/project_detail_screen.dart';
+import 'package:droomy/widgets/number_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../widgets/user_profile_app_bar.dart';
@@ -85,30 +86,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               BottomNavigationBarItem(
                   icon: Stack(children: [
                     const Icon(Icons.rocket_launch),
-                    state.numOfPendingReleases > 0
-                        ? Positioned(
-                            right: 0,
-                            child: Container(
-                              padding: const EdgeInsets.all(1),
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              constraints: const BoxConstraints(
-                                minWidth: 12,
-                                minHeight: 12,
-                              ),
-                              child: Text(
-                                '${state.numOfPendingReleases}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 8,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          )
-                        : Container(),
+                    Visibility(
+                      visible: state.numOfPendingReleases > 0,
+                      child: NumberBadge(
+                        badgeCount: state.numOfPendingReleases,
+                      ),
+                    ),
                   ]),
                   label: 'Releases'),
             ]),

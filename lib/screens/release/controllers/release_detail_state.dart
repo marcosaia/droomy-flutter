@@ -7,6 +7,8 @@ part 'release_detail_state.freezed.dart';
 class ReleaseDetailState with _$ReleaseDetailState {
   factory ReleaseDetailState({
     @Default(null) DateTime? bestReleaseDate,
+    @Default(null) String? releaseDateExplanation,
+    @Default(false) bool isScheduled,
     required ViewState viewState,
   }) = _ReleaseDetailState;
 

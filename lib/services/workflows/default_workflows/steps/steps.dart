@@ -11,11 +11,9 @@ class DefaultWorkflowSteps {
     shortDescription:
         "Record the best demo you can, memorize and internalize your song and concept",
     actionPlan: ActionPlan(actionItems: [
-      ActionItem.simpleGoal("Find, record or produce a good instrumental"),
-      ActionItem.simpleGoal(
-          "Record the best demo you can (you can even do it with your phone)"),
-      ActionItem.simpleGoal(
-          "Send your demo to your producer, or let some friends listen to it")
+      ActionItem.simpleGoal("Find or produce a good instrumental"),
+      ActionItem.simpleGoal("Record the best demo you can"),
+      ActionItem.simpleGoal("Send your demo to your producer and friends")
     ]),
   );
 
@@ -24,10 +22,9 @@ class DefaultWorkflowSteps {
       displayName: "Recording",
       shortDescription: "Book a studio session to record your new song",
       actionPlan: ActionPlan(actionItems: [
-        ActionItem.simpleGoal(
-            "Text or call your producer, or book an appointment in a professional studio"),
-        ActionItem.simpleGoal(
-            "Reharse your track, try to memorize it, you will have more energy and fun in the studio")
+        ActionItem.simpleGoal("Book an appointment for a recording session"),
+        ActionItem.simpleGoal("Reharse your track and memorize it"),
+        ActionItem.simpleGoal("Complete the recording session"),
       ]));
 
   static final mixing = WorkflowStep(
@@ -39,7 +36,8 @@ class DefaultWorkflowSteps {
         ActionItem.simpleGoal(
             "Find one or more reference tracks that you like"),
         ActionItem.simpleGoal(
-            "Send the reference tracks and your recordings to somebody for mixing your song"),
+            "Send the reference tracks and your recordings to somebody that can mix your song"),
+        ActionItem.simpleGoal("Receive your final mixed track"),
       ]));
 
   static final mastering = WorkflowStep(
@@ -50,7 +48,8 @@ class DefaultWorkflowSteps {
     actionPlan: ActionPlan(actionItems: [
       ActionItem.simpleGoal("Find one or more reference tracks that you like"),
       ActionItem.simpleGoal(
-          "Send the reference tracks and your recordings to somebody for mastering your song"),
+          "Send the reference tracks and your mixed track to somebody that can master your song"),
+      ActionItem.simpleGoal("Receive your final mastered track"),
     ]),
   );
 }

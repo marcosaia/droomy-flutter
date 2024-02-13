@@ -19,13 +19,17 @@ class ReleaseDetailScreen extends ConsumerStatefulWidget {
 class _ReleaseDetailScreenState extends ConsumerState<ReleaseDetailScreen> {
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(releaseDetailControllerProvider(widget.project));
-    final bestReleaseDate = state.bestReleaseDate;
-    if (bestReleaseDate == null) {
+    final provider = releaseDetailControllerProvider(widget.project);
+    final state = ref.watch(provider);
+    final controller = ref.watch(provider.notifier);
+
+    // If the release is scheduled we go back to the dashboard
+    if (state.isScheduled == true) {
+      Future.microtask(() {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      });
       return Container();
     }
-
-    final bestReleaseDateStr = DateFormat('dd/MM/yyyy').format(bestReleaseDate);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Plan your release')),
@@ -88,16 +92,39 @@ class _ReleaseDetailScreenState extends ConsumerState<ReleaseDetailScreen> {
               title: "Release Date",
               text:
                   'Here is the best release date for increasing the chance you get into a featured playlist and having enough time to promote your song',
-              footer: Column(
-                children: [
-                  Text(bestReleaseDateStr,
-                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.primary)),
-                  const SizedBox(height: Constants.paddingSmall),
-                  Text('at 12 am (EST)',
-                      style: Theme.of(context).textTheme.titleMedium)
-                ],
-              ),
+              footer: state.bestReleaseDate != null
+                  ? Expanded(
+                      child: Column(
+                        children: [
+                          Text(
+                              DateFormat('dd/MM/yyyy')
+                                  .format(state.bestReleaseDate!),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displaySmall
+                                  ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary)),
+                          const SizedBox(height: Constants.paddingSmall),
+                          Text('at 12 am (EST)',
+                              style: Theme.of(context).textTheme.titleMedium),
+                          state.releaseDateExplanation != null
+                              ? Column(children: [
+                                  const SizedBox(
+                                      height: Constants.paddingSmall),
+                                  Text(state.releaseDateExplanation!,
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium
+                                          ?.copyWith(color: Colors.grey[500]))
+                                ])
+                              : Container()
+                        ],
+                      ),
+                    )
+                  : const Center(child: CircularProgressIndicator()),
               buttonText: "CHANGE DATE",
             ),
 
@@ -131,6 +158,21 @@ class _ReleaseDetailScreenState extends ConsumerState<ReleaseDetailScreen> {
               text:
                   'Make sure you are uploading a WAV (tipically 16-bit, 44.1 kHz WAV)',
               buttonText: "VERIFY AUDIO FILE",
+            ),
+
+            const SizedBox(
+              height: Constants.paddingBig,
+            ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                    onPressed: () {
+                      controller.scheduleRelease();
+                    },
+                    child: const Text("I have scheduled the release")),
+              ],
             ),
           ]),
         ),
